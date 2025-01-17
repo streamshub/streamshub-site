@@ -1,0 +1,91 @@
+= Installation
+
+== Flink Kubernetes Operator
+
+In order to be able to deploy Flink SQL jobs the https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-main/[Flink Kubernetes Operator] needs to be installed.
+
+=== CertManager Installation
+
+The operator installs a webhook that requires CertManager to function, so this needs to be installed first:
+
+[source, bash]
+----
+kubectl create -f https://github.com/jetstack/cert-manager/releases/download/v1.15.2/cert-manager.yaml
+----
+[source, bash]
+----
+kubectl wait deployment --all  --for=condition=Available=True --timeout=300s -n cert-manager
+----
+
+=== Operator Installation
+
+First add the helm repository, if you haven't already:
+
+[source, bash]
+----
+helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/
+----
+
+Then install the helm chart for operator 1.10:
+[source, bash]
+----
+helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator \
+--set podSecurityContext=null \
+--set defaultConfiguration."log4j-operator\.properties"=monitorInterval\=30 \
+--set defaultConfiguration."log4j-console\.properties"=monitorInterval\=30 \
+--set defaultConfiguration."flink-conf\.yaml"="kubernetes.operator.metrics.reporter.prom.factory.class\:\ org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+ kubernetes.operator.metrics.reporter.prom.port\:\ 9249 " \
+-n flink
+----
+
+Once that completes you are ready to deploy your first Flink SQL query.
+
+== Deploying a Flink SQL Query
+
+.Example FlinkDeployment
+[source,yaml]
+----
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: standalone-etl
+spec:
+  image: quay.io/streamshub/flink-sql-runner:0.1.0
+  flinkVersion: v1_19
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "1"
+  serviceAccount: flink
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  job:
+    jarURI: local:///opt/streamshub/flink-sql-runner.jar
+    args: ["
+        CREATE TABLE orders (
+          order_number BIGINT, 
+          price DECIMAL(32,2), 
+          buyer ROW<first_name STRING, 
+          last_name STRING>, 
+          last_name STRING, 
+          order_time TIMESTAMP(3)
+        ) WITH (
+          'connector' = 'datagen'
+        ); 
+        CREATE TABLE print_table 
+        WITH (
+          'connector' = 'print'
+        ) 
+        LIKE orders
+        ; 
+        INSERT INTO print_table 
+          SELECT * 
+          FROM orders;
+        "]
+    parallelism: 1
+    upgradeMode: stateless
+----
