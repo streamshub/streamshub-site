@@ -1,21 +1,10 @@
 [
     {
-        "name": "Kroxylicious",
-        "sourceOwner": "kroxylicious",
-        "sourceRepository": "kroxylicious", 
-        "developmentBranch": "main",
+        "name": "Flink SQL Runner",
+        "sourceOwner": "tomncooper",
+        "sourceRepository": "flink-sql", 
+        "developmentBranch": "docs-dev",
         "docsFolderPath": "docs",
-        "tags":[
-            "v0.9.0", 
-            "v0.8.0", 
-            "v0.7.0", 
-            "v0.6.0", 
-            "v0.5.1", 
-            "v0.5.0", 
-            "v0.4.1", 
-            "v0.4.0", 
-            "v0.3.0", 
-            "v0.2.0"
-        ] 
+        "tags":["0.1.0-doc"] 
     }
 ]

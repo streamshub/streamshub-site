@@ -14,6 +14,7 @@ import picocli.CommandLine.Parameters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -272,6 +273,7 @@ class DocBuilder implements Callable<Integer> {
     @Option(names = {"-r", "--root"}, description = "The root folder for all documentation downloads", defaultValue = "content/docs")
     private String docsRoot;
     private Path docsRootPath;
+
     
     @Parameters(index="0", description = "GitHub Access Token")
     private String accessToken;
@@ -307,16 +309,22 @@ class DocBuilder implements Callable<Integer> {
         if (skipIfOutputFolderExists && Files.exists(outputDirectory)) {
             LOGGER.info("Folder already exists for " + source.getName() + " " + versionReference + " so download will be skipped");
         } else {
-            ghFolderDownloader.downloadFolder(
-                source.getSourceOwner(), 
-                source.getSourceRepository(),
-                versionReference,
-                source.getDocsFolderPath(),
-                outputDirectory
-            );
+            try {
+                ghFolderDownloader.downloadFolder(
+                    source.getSourceOwner(), 
+                    source.getSourceRepository(),
+                    versionReference,
+                    source.getDocsFolderPath(),
+                    outputDirectory
+                );
+                //Add the header to the index file
+                addHeaderToIndexFiles(outputDirectory, source.getName(), versionReference);
+            } catch (FileNotFoundException fileNotFoundError) {
+                LOGGER.error(
+                    "Unable to download folder for: " + source.getName() + " - " + versionReference +". Is the version string valid?", 
+                    fileNotFoundError);
+            }
 
-            //Add the header to the index file
-            addHeaderToIndexFiles(outputDirectory, source.getName(), versionReference);
         }
 
     }
