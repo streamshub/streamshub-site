@@ -271,6 +271,7 @@ class DocBuilder implements Callable<Integer> {
 
     @Option(names = {"-r", "--root"}, description = "The root folder for all documentation downloads", defaultValue = "content/docs")
     private String docsRoot;
+    private Path docsRootPath;
     
     @Parameters(index="0", description = "GitHub Access Token")
     private String accessToken;
@@ -294,57 +295,53 @@ class DocBuilder implements Callable<Integer> {
         }
     }
 
+    private void processSource(
+        GitHubFolderDownloader ghFolderDownloader, 
+        Source source, 
+        String versionReference,
+        boolean skipIfOutputFolderExists) throws IOException, URISyntaxException {
+
+        LOGGER.info("Downloading documentation for " + source.getName() + " version " + versionReference);
+
+        Path outputDirectory = docsRootPath.resolve(source.getName()).resolve(versionReference);
+        if (skipIfOutputFolderExists && Files.exists(outputDirectory)) {
+            LOGGER.info("Folder already exists for " + source.getName() + " " + versionReference + " so download will be skipped");
+        } else {
+            ghFolderDownloader.downloadFolder(
+                source.getSourceOwner(), 
+                source.getSourceRepository(),
+                versionReference,
+                source.getDocsFolderPath(),
+                outputDirectory
+            );
+
+            //Add the header to the index file
+            addHeaderToIndexFiles(outputDirectory, source.getName(), versionReference);
+        }
+
+    }
+
     @Override
     public Integer call() throws Exception { 
         LOGGER.info("Loading: " + sourcePath);
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(sourcePath));
-
         ObjectMapper objectMapper = new ObjectMapper();
         List<Source> sources = objectMapper.readValue(bufferedReader, new TypeReference<List<Source>>(){});
+
+        this.docsRootPath = Paths.get(docsRoot);
 
         GitHubFolderDownloader ghFolderDownloader = new GitHubFolderDownloader(accessToken);
 
         for (Source source : sources) {
             LOGGER.info("Found source: " + source);
 
-            Path docsRootPath = Paths.get(docsRoot);
-
             //Download the dev branch
-            LOGGER.info("Downloading development documentation for " + source.getName() + " from branch " + source.getDevelopmentBranch());
-            Path devDestinationPath = docsRootPath.resolve(source.getName()).resolve(source.getDevelopmentBranch());
-
-            ghFolderDownloader.downloadFolder(
-                source.getSourceOwner(), 
-                source.getSourceRepository(),
-                source.getDevelopmentBranch(),
-                source.getDocsFolderPath(),
-                devDestinationPath
-            );
-
-            //Add the header to the index file
-            addHeaderToIndexFiles(devDestinationPath, source.getName(), "development");
+            processSource(ghFolderDownloader, source, source.getDevelopmentBranch(), false);
 
             //Download each of the tags
             for (String tag : source.getTags()) {
-
-                LOGGER.info("Downloading documentation for " + source.getName() + " version " + tag);
-                Path tagDestinationPath = docsRootPath.resolve(source.getName()).resolve(tag);
-
-                if(Files.exists(tagDestinationPath)) {
-                    LOGGER.info("Folder already exists for " + source.getName() + " " + tag + " so download will be skipped");
-                } else {
-                    ghFolderDownloader.downloadFolder(
-                        source.getSourceOwner(), 
-                        source.getSourceRepository(),
-                        tag,
-                        source.getDocsFolderPath(),
-                        tagDestinationPath
-                    );
-                }
-
-                //Add the header to the index file
-                addHeaderToIndexFiles(tagDestinationPath, source.getName(), tag);
+                processSource(ghFolderDownloader, source, tag, true);
             }
         }
         return 0;
