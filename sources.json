@@ -6,5 +6,13 @@
         "developmentBranch": "docs-dev",
         "docsFolderPath": "docs",
         "tags":["0.1.0-doc"] 
+    },
+    {
+        "name": "Flink SQL Tutorials",
+        "sourceOwner": "tomncooper",
+        "sourceRepository": "flink-sql-examples", 
+        "developmentBranch": "docs-dev",
+        "docsFolderPath": "docs",
+        "tags":[] 
     }
 ]

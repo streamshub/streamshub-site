@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
@@ -284,6 +285,18 @@ class DocBuilder implements Callable<Integer> {
         System.exit(exitCode);
     }
 
+    private static boolean hasHugoFrontMatter(Path filePath) throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(filePath)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("+++")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static void addHeaderToIndexFiles(Path sourceFolder, String sourceName, String versionReference) throws IOException {
         LOGGER.info("Adding Hugo frontmatter header to index files in " + sourceName + " - " + sourceFolder);
         List<Path> indexFiles = FileTools.findIndexFiles(sourceFolder);
@@ -292,7 +305,11 @@ class DocBuilder implements Callable<Integer> {
         } else {
             Map<String, String> headerData = Map.of("name", sourceName, "version", versionReference);
             for(Path indexFile : indexFiles){
-                FileTools.addHeader(defaultHeader, headerData, indexFile);
+                if(hasHugoFrontMatter(indexFile)) {
+                    LOGGER.info("Index file " + indexFile + " already has hugo front matter, so will be skipped.");
+                } else {
+                    FileTools.addHeader(defaultHeader, headerData, indexFile);
+                }
             }
         }
     }
