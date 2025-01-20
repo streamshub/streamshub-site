@@ -24,6 +24,16 @@ title = 'StreamsHub'
     verbose = false
     workingFolderCurrent = true
 
+[params]
+  github_repo = "https://github.com/tomncooper/streamshub-site"
+  offlineSearch = true
+
+[params.ui]
+  sidebar_menu_compact = true
+  ul_show = 2
+  sidebar_menu_foldable = false
+  sidebar_cache_limit = 1000
+
 [menu]
   [[menu.main]]
     name = 'Documentation'
