@@ -1,15 +1,11 @@
 baseURL = 'https://streamshub.io'
 languageCode = 'en-us'
 title = 'StreamsHub'
-theme = 'docsy'
 
 [module]
-  proxy = "direct"
+  replacements = "github.com/FortAwesome/Font-Awesome -> ., github.com/twbs/bootstrap -> ."
 [[module.imports]]
-  path = "github.com/google/docsy"
-  disable = false
-[module.hugoVersion]
-  extended = true
+  path = "docsy"
 
 [security]
   [security.exec]
@@ -27,7 +23,6 @@ theme = 'docsy'
     trace = false
     verbose = false
     workingFolderCurrent = true
-
 
 [menu]
   [[menu.main]]
