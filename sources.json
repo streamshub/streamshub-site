@@ -1,17 +1,17 @@
 [
     {
         "name": "Flink SQL Runner",
-        "sourceOwner": "tomncooper",
+        "sourceOwner": "streamshub",
         "sourceRepository": "flink-sql", 
-        "developmentBranch": "docs-dev",
+        "developmentBranch": "main",
         "docsFolderPath": "docs",
-        "tags":["0.1.0-doc"] 
+        "tags":[] 
     },
     {
         "name": "Flink SQL Tutorials",
-        "sourceOwner": "tomncooper",
+        "sourceOwner": "streamshub",
         "sourceRepository": "flink-sql-examples", 
-        "developmentBranch": "docs-dev",
+        "developmentBranch": "main",
         "docsFolderPath": "docs",
         "tags":[] 
     }

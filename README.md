@@ -16,13 +16,15 @@ Each component's documentation source and the versions which are included are co
     "tags":["0.1.0-doc"] 
 }
 ```
-This file is read by the `scripts/docBuilder.java` [jbang](https://www.jbang.dev/) script. You will need to install `jbang` locally in order to run the documentation build.
+This file is read by the `scripts/docBuilder.java` [jbang](https://www.jbang.dev/) script. 
+You will need to install `jbang` locally in order to run the documentation build.
 
-The contents of the `docsFolderPath` in each `<sourceOwner>/<sourceRespoitory>` GitHub repository at each supplied reference `tag` will be pulled and placed in their own folder under `content/docs/<name>/<tag>`. If a folder already exists for the given tag then it will not be pulled.
+The contents of the `docsFolderPath` in each `<sourceOwner>/<sourceRespoitory>` GitHub repository at each supplied reference `tag` will be pulled and placed in their own folder under `content/docs/<name>/<tag>`. 
+If a folder already exists for the given tag then it will not be pulled.
 
-The contents of the `docsFolderPath` folder on the `devlopmentBranch` will always be pulled on every build.
+The contents of the `docsFolderPath` folder on the `devlopmentBranch` will always be pulled on every build via the `.github/workflows/publish.yaml` GitHub Action.
 
-To pull the configured sources you will need a [GitHub access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens):
+To pull the configured sources you will need a [GitHub access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with permissions to access **all** the configured `<sourceOwner>/<sourceRespoitory>`:
 
 ```shell
 ./scripts/docBuilder.java <github-access-token>
