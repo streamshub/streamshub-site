@@ -1,6 +1,6 @@
 +++
 title = 'StreamsHub Documentation'
-date = 2025-01-09T16:14:02Z
+linkTitle = "Documentation"
 [[cascade]]
     type = 'docs'
 +++
