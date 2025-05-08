@@ -1,5 +1,13 @@
 [
     {
+        "name": "StreamsHub Console",
+        "sourceOwner": "streamshub",
+        "sourceRepository": "console", 
+        "developmentBranch": "main",
+        "docsFolderPath": "docs/sources",
+        "tags":[] 
+    },
+    {
         "name": "Flink SQL Runner",
         "sourceOwner": "streamshub",
         "sourceRepository": "flink-sql", 
