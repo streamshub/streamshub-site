@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -268,11 +267,6 @@ class FileTools {
 class DocBuilder implements Callable<Integer> {
 
     static final Logger LOGGER = Logger.getLogger(DocBuilder.class);
-    static final String defaultHeader = "+++\n" +
-                "title = '${version}'\n" +
-                "[[cascade]]\n" +
-                "    type = 'docs'\n" +
-                "+++\n\n";
     static final String defaultTemplatePath = "scripts/templates";
 
     @Option(names = {"-c", "--config"}, description = "Path to the sources definition configuration file", defaultValue = "sources.json")
