@@ -1,7 +1,27 @@
-// Remnants of theme change, sticking to defaults is probably best.
-// $primary: #02151b;
-// $secondary: #05a6a6;
+// https://design.jboss.org/streamshub/
+$streamshub-green-0: #02151b;
+$streamshub-green-1: #013440;
+$streamshub-green-2: #05a6a6;
+$streamshub-green-3: #91f2f2;
 
-// body {
-//     --color-link: #05a6a6;
-// }
+$body-font-color: #dedede;
+
+$hint-colors: (
+  info: $streamshub-green-2,
+  warning: #fd6,
+  danger: #f66,
+);
+
+@mixin theme-dark {
+  --gray-100: #{$streamshub-green-1};
+  --gray-200: #{$streamshub-green-1};
+  --gray-500: #{$streamshub-green-2};
+
+  --color-link: #{$streamshub-green-2};
+  --color-visited-link: #{$streamshub-green-2};
+
+  --body-background: #{$streamshub-green-0};
+  --body-font-color: #{$body-font-color};
+
+  --icon-filter: brightness(0) invert(1);
+}

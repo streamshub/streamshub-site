@@ -14,6 +14,8 @@ enableGitInfo = true
 [markup]
   [markup.tableOfContents]
     startLevel = 1
+  [markup.highlight]
+    style = "catppuccin-macchiato"
   [markup.asciidocExt]
     backend = 'html5'
     extensions = []
