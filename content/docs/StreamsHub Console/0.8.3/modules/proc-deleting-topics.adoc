@@ -1,0 +1,11 @@
+[id='proc-deleting-topics-{context}']
+= Deleting topics
+
+[role="_abstract"]
+Delete topics from the *Topics* page.
+
+.Procedure
+
+. Log in to the Kafka cluster in the StreamsHub Console, then click *Topics*.  
+. Select the options icon (three vertical dots) for the relevant topic and click *Delete*.
+. Enter the topic name to confirm the deletion.
