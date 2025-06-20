@@ -33,7 +33,7 @@ To pull the configured sources you will need a [GitHub access token](https://doc
 ## Building the site
 
 The site uses the [hugo](https://gohugo.io/) static site generator. 
-You will need install that and the [PostCSS](https://gohugo.io/hugo-pipes/postcss/) packages in order to build the source.
+You will need to install a [recent release](https://github.com/gohugoio/hugo/releases) (the version in your package manager is probably too old) and the [PostCSS](https://gohugo.io/hugo-pipes/postcss/) packages in order to build the source.
 
 You can build the site by running `hugo` from the repository root.
 Or run a live preview server by running:
