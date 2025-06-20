@@ -1,0 +1,7 @@
+.book-brand .book-icon {
+    filter: none; // Hugo makes logo monochrome by default
+}
+
+::placeholder {
+    color: var(--gray-500); // Placeholder text is a bit hard to read by default
+}
