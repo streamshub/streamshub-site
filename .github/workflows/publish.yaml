@@ -51,8 +51,6 @@ jobs:
       - name: Update Development Docs
         run: |
           jbang scripts/docBuilder.java ${{ secrets.GITHUB_TOKEN }}
-      - name: Install Node.js dependencies
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
