@@ -34,8 +34,8 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass
         run: sudo snap install dart-sass
-      - name: Install asciidoctor
-        run: sudo apt -y install asciidoctor 
+      - name: Install asciidoctor and ruby-rouge
+        run: sudo apt -y install asciidoctor ruby-rouge
       - name: Install Java 21
         uses: actions/setup-java@v4
         with:
