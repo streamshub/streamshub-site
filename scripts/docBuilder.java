@@ -33,12 +33,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.text.StringSubstitutor;
 import org.apache.log4j.BasicConfigurator;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -148,6 +147,7 @@ class GitHubFolderDownloader {
     }
     
     public void downloadFolder(String owner, String repo, String ref, String path, Path destPath) throws IOException, URISyntaxException {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         // Create destination directory if it doesn't exist
         LOGGER.debug(
@@ -165,24 +165,33 @@ class GitHubFolderDownloader {
         );
         
         for (GitHubContent item : contents) {
-            String type = item.getType();
-            String itemPath = item.getPath();
-            String itemName = item.getName();
-            
-            if ("file".equals(type)) {
-                // Download file
-                String downloadUrl = item.getDownloadUrl();
-                if (downloadUrl == null) {
-                    // For some refs, we need to fetch the raw content differently
-                    downloadUrl = String.format("https://raw.githubusercontent.com/%s/%s/%s/%s",
-                        owner, repo, ref, itemPath);
+            futures.add(CompletableFuture.runAsync(() -> {
+                try {
+                    String type = item.getType();
+                    String itemPath = item.getPath();
+                    String itemName = item.getName();
+
+                    if ("file".equals(type)) {
+                            // Download file
+                            String downloadUrl = item.getDownloadUrl();
+                            if (downloadUrl == null) {
+                                // For some refs, we need to fetch the raw content differently
+                                downloadUrl = String.format("https://raw.githubusercontent.com/%s/%s/%s/%s",
+                                        owner, repo, ref, itemPath);
+                            }
+
+                            downloadFile(downloadUrl, destPath.resolve(itemName));
+                    } else if ("dir".equals(type)) {
+                            // Recursively download subdirectory
+                            downloadFolder(owner, repo, ref, itemPath, destPath.resolve(itemName));
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-                downloadFile(downloadUrl, destPath.resolve(itemName));
-            } else if ("dir".equals(type)) {
-                // Recursively download subdirectory
-                downloadFolder(owner, repo, ref, itemPath, destPath.resolve(itemName));
-            }
+            }));
         }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
     
     private String makeApiRequest(String apiUrl) throws IOException, URISyntaxException {
@@ -457,6 +466,12 @@ class DocBuilder implements Callable<Integer> {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Source> sources = objectMapper.readValue(bufferedReader, new TypeReference<List<Source>>(){});
 
+        Map<Source, List<CompletableFuture<Void>>> sourceFutures = sources.stream()
+            .collect(Collectors.toMap(
+                source -> source,
+                source -> new ArrayList<>()
+            ));
+
         this.docsRootPath = Paths.get(docsRoot);
         this.templateDirPath = Paths.get(templateDir);
 
@@ -465,17 +480,40 @@ class DocBuilder implements Callable<Integer> {
         for (Source source : sources) {
             LOGGER.info("Found source: " + source);
 
-            //Download the dev branch
-            processSource(ghFolderDownloader, source, source.getDevelopmentBranch(), false);
+            sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
+                try {
+                    //Download the dev branch
+                    processSource(ghFolderDownloader, source, source.getDevelopmentBranch(), false);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }));
 
             //Download each of the tags
             for (String tag : source.getTags()) {
-                processSource(ghFolderDownloader, source, tag, true);
+                sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
+                    try {
+                        processSource(ghFolderDownloader, source, tag, true);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
             }
 
-            // Create the contents page for this source
-            createSourceContentsPage(source);
+            // Wait for the development branch and tags of this source to finish processing, then generate a contents page
+            CompletableFuture<Void> branchAndTagFutures = CompletableFuture.allOf(sourceFutures.get(source).toArray(new CompletableFuture[0]));
+            sourceFutures.get(source).add(branchAndTagFutures.thenRun(() -> {
+                try {
+                    // Create the contents page for this source
+                    createSourceContentsPage(source);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
         }
+
+        // Wait for everything to finish processing and generating
+        CompletableFuture.allOf(sourceFutures.values().stream().flatMap(List::stream).toArray(CompletableFuture[]::new)).join();
 
         return 0;
     }
