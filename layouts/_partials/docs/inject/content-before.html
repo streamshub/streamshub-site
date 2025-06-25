@@ -1,5 +1,10 @@
-{{ if .Title }}
-<h1>
-  {{ .Title }}
-</h1>
+{{ if and .Parent .Title }}
+<h3 class="subheading">{{ .Parent.LinkTitle }}</h3>
+  <h1>
+    {{ .Title }}
+  </h1>
+{{ else if .Title }}
+  <h1>
+    {{ .Title }}
+  </h1>
 {{ end }}
