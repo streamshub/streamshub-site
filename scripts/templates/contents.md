@@ -1,5 +1,7 @@
-# {{ sourceName }} Documentation
-
++++
+title = '{{ sourceName }} Documentation'
+linkTitle = "{{ sourceName }}"
++++
 ## In development documentation
 
 [{{ developmentBranchName }}]({{ developmentBranchIndexFile }})

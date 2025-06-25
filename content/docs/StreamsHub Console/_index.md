@@ -1,5 +1,7 @@
-# StreamsHub Console Documentation
-
++++
+title = 'StreamsHub Console Documentation'
+linkTitle = "StreamsHub Console"
++++
 ## In development documentation
 
 [main](main/index.adoc)
