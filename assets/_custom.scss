@@ -5,3 +5,12 @@
 ::placeholder {
     color: var(--gray-500); // Placeholder text is a bit hard to read by default
 }
+
+.subheading {
+    color: var(--gray-500);
+    margin-bottom: 0.5em;
+}
+
+.subheading + h1 {
+    margin-top: 0;
+}
