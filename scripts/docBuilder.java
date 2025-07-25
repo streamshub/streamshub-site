@@ -3,6 +3,7 @@
 //DEPS com.hubspot.jinjava:jinjava:2.8.0
 //DEPS info.picocli:picocli:4.6.3
 //DEPS ch.qos.reload4j:reload4j:1.2.19
+//DEPS com.fasterxml.jackson.core:jackson-core:2.18.2
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
 //DEPS org.apache.commons:commons-text:1.13.0
 //DEPS commons-io:commons-io:2.18.0
@@ -48,90 +49,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.hubspot.jinjava.Jinjava;
 
-class Source {
-    /** The name of the top level folder for this source */
-    private String name;
-    /** The GitHub repository owner org/user for this source.*/
-    private String sourceOwner;
-    /** The GitHub repository for this source. */
-    private String sourceRepository;
-    /** This is the branch within the repo which will alway be pulled on every build, so should be the main dev branch. */
-    private String developmentBranch;
-    /** This is the path, from the repository root, to the folder containing the docs source. */
-    private String docsFolderPath;
-    /** This is a list of git tags, one for each version of the docs that should be pulled. */
-    private List<String> tags;
-    /** 
-     * If true, the contents page will not be created for this source. 
-     * This is useful if the source does not do releases and only wants the head of the development branch to be pulled.
-     */
-    private boolean skipContentsPageCreation = false;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getSourceOwner() {
-        return sourceOwner;
-    }
-
-    public void setSourceOwner(String sourceOwner) {
-        this.sourceOwner = sourceOwner;
-    }
-
-    public String getSourceRepository() {
-        return sourceRepository;
-    }
-
-    public void setSourceRepository(String sourceRepository) {
-        this.sourceRepository = sourceRepository;
-    }
-
-    public String getDevelopmentBranch() {
-        return developmentBranch;
-    }
-
-    public void setDevelopmentBranch(String developmentBranch) {
-        this.developmentBranch = developmentBranch;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-    
-    public String getDocsFolderPath() {
-        return docsFolderPath;
-    }
-
-    public void setDocsFolderPath(String docsFolderPath) {
-        this.docsFolderPath = docsFolderPath;
-    }
-
-    public boolean isSkipContentsPageCreation() {
-        return skipContentsPageCreation;
-    }
-
-    @Override
-    public String toString() {
-        return "Source [" +
-            "name=" + name + ", " +
-            "sourceRepository=" + sourceRepository + ", " +
-            "developmentBranch=" + developmentBranch + ", " +
-            "docsFolderPath=" + docsFolderPath + ", " +
-            "tags=" + tags + ", " +
-            "skipContentsPageCreation=" + skipContentsPageCreation +
-            "]";
-    }
-
-} 
+/**
+ * @param name The name of the top level folder for this source
+ * @param sourceOwner The GitHub repository owner org/user for this source
+ * @param sourceRepository The GitHub repository for this source
+ * @param developmentBranch This is the branch within the repo which will always be pulled on every build, so should be the main dev branch
+ * @param docsFolderPath This is the path, from the repository root, to the folder containing the docs source
+ * @param tags This is a list of git tags, one for each version of the docs that should be pulled
+ * @param skipContentsPageCreation False by default. If true, the contents page will not be created for this source.
+ *                                 This is useful if the source does not do releases and only wants the head of the development branch to be pulled
+ */
+record Source(
+        String name,
+        String sourceOwner,
+        String sourceRepository,
+        String developmentBranch,
+        String docsFolderPath,
+        List<String> tags, boolean skipContentsPageCreation
+) {}
 
 class GitHubFolderDownloader {
 
@@ -167,13 +102,13 @@ class GitHubFolderDownloader {
         for (GitHubContent item : contents) {
             futures.add(CompletableFuture.runAsync(() -> {
                 try {
-                    String type = item.getType();
-                    String itemPath = item.getPath();
-                    String itemName = item.getName();
+                    String type = item.type();
+                    String itemPath = item.path();
+                    String itemName = item.name();
 
                     if ("file".equals(type)) {
                             // Download file
-                            String downloadUrl = item.getDownloadUrl();
+                            String downloadUrl = item.download_url();
                             if (downloadUrl == null) {
                                 // For some refs, we need to fetch the raw content differently
                                 downloadUrl = String.format("https://raw.githubusercontent.com/%s/%s/%s/%s",
@@ -233,26 +168,8 @@ class GitHubFolderDownloader {
         }
     }
     
-    // POJO class to represent GitHub content
-    public static class GitHubContent {
-        private String type;
-        private String path;
-        private String name;
-        private String download_url;
-        
-        // Getters and setters
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        
-        public String getPath() { return path; }
-        public void setPath(String path) { this.path = path; }
-        
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        
-        public String getDownloadUrl() { return download_url; }
-        public void setDownloadUrl(String download_url) { this.download_url = download_url; }
-    }
+    // Record to represent GitHub content
+    public record GitHubContent(String type, String path, String name, String download_url) {}
 }
 
 class FileTools {
@@ -262,7 +179,7 @@ class FileTools {
         String newContent = textToPrepend + content;
         Files.write(filePath, newContent.getBytes());
     }
-    
+
     public static List<Path> findIndexFiles(Path directory) {
         FileFilter fileFilter = WildcardFileFilter.builder().setWildcards("*index.adoc", "*index.md").get();
         File[] files = directory.toFile().listFiles(fileFilter);
@@ -286,13 +203,13 @@ class DocBuilder implements Callable<Integer> {
 
     @Option(names = {"-td", "--templateDir"}, description = "Path to the template directory", defaultValue = defaultTemplatePath)
     private String templateDir;
-    
+
     @Parameters(index="0", description = "GitHub Access Token")
     private String accessToken;
 
     private Path docsRootPath;
     private Path templateDirPath;
-    
+
     public static void main(String... args) {
         BasicConfigurator.configure();
         int exitCode = new CommandLine(new DocBuilder()).execute(args);
@@ -344,60 +261,60 @@ class DocBuilder implements Callable<Integer> {
     }
 
     private void processSource(
-        GitHubFolderDownloader ghFolderDownloader, 
-        Source source, 
+        GitHubFolderDownloader ghFolderDownloader,
+        Source source,
         String versionReference,
         boolean skipIfOutputFolderExists) throws IOException, URISyntaxException {
 
-        LOGGER.info("Downloading documentation for " + source.getName() + " version " + versionReference);
+        LOGGER.info("Downloading documentation for " + source.name() + " version " + versionReference);
 
-        Path outputDirectory = docsRootPath.resolve(source.getName()).resolve(versionReference);
+        Path outputDirectory = docsRootPath.resolve(source.name()).resolve(versionReference);
         if (skipIfOutputFolderExists && Files.exists(outputDirectory)) {
-            LOGGER.info("Folder already exists for " + source.getName() + " " + versionReference + " so download will be skipped");
+            LOGGER.info("Folder already exists for " + source.name() + " " + versionReference + " so download will be skipped");
         } else {
             try {
                 ghFolderDownloader.downloadFolder(
-                    source.getSourceOwner(), 
-                    source.getSourceRepository(),
+                    source.sourceOwner(),
+                    source.sourceRepository(),
                     versionReference,
-                    source.getDocsFolderPath(),
+                    source.docsFolderPath(),
                     outputDirectory
                 );
                 //Add the header to the index file
-                addHeaderToIndexFiles(outputDirectory, source.getName(), versionReference);
+                addHeaderToIndexFiles(outputDirectory, source.name(), versionReference);
             } catch (FileNotFoundException fileNotFoundError) {
                 LOGGER.error(
-                    "Unable to download folder for: " + source.getName() + " - " + versionReference +". Is the version string valid?", 
+                    "Unable to download folder for: " + source.name() + " - " + versionReference +". Is the version string valid?",
                     fileNotFoundError);
             }
 
         }
 
     }
-   
+
     /**
      * Gets the relative path to the index file for a given source and tag.
-     * 
+     *
      * @param source The source metadata containing the name and docs folder path.
      * @param tag The tag or branch name for which to find the index file.
      * @return The relative path to the index file (the file itself and its parent directory).
      * @throws IOException If an I/O error occurs while finding the index file.
      * @throws FileNotFoundException If no index files are found in the specified tag folder.
-     */     
+     */
     private Path getRelativeIndexPath(Source source, String tag) throws IOException {
-    
-        Path tagBranchPath = docsRootPath.resolve(source.getName()).resolve(tag);
+
+        Path tagBranchPath = docsRootPath.resolve(source.name()).resolve(tag);
         List<Path> tagIndexFiles = FileTools.findIndexFiles(tagBranchPath);
 
         if (tagIndexFiles.isEmpty()) {
             throw new FileNotFoundException("No index files found in tag folder: " + tagBranchPath);
-        } 
+        }
 
         if(tagIndexFiles.size() > 1) {
             LOGGER.warn("Multiple index files found in tag folder: " + tagBranchPath + ". Only the first one ("+ tagIndexFiles.get(0) +") will be used.");
-        } 
+        }
         Path indexFilePath = tagIndexFiles.get(0);
-        // The link we want is relative to this contents file so we just need the index file and its parent directory 
+        // The link we want is relative to this contents file so we just need the index file and its parent directory
         int pathCount = indexFilePath.getNameCount();
         Path relativePath = indexFilePath.subpath(pathCount - 2, pathCount);
         return relativePath;
@@ -416,32 +333,32 @@ class DocBuilder implements Callable<Integer> {
      */
     private void createSourceContentsPage(Source source) throws IOException {
 
-        if (source.isSkipContentsPageCreation()) {
-            LOGGER.info("Skipping contents page creation for " + source.getName() + " as skipContentsPageCreation is set to true.");
+        if (source.skipContentsPageCreation()) {
+            LOGGER.info("Skipping contents page creation for " + source.name() + " as skipContentsPageCreation is set to true.");
             return;
         }
 
-        Path contentsFile = docsRootPath.resolve(source.getName()).resolve("_index.md");
+        Path contentsFile = docsRootPath.resolve(source.name()).resolve("_index.md");
         if (Files.exists(contentsFile)) {
-            LOGGER.info("Contents file already exists for " + source.getName() + " at " + contentsFile  + " this will be overwritten.");
+            LOGGER.info("Contents file already exists for " + source.name() + " at " + contentsFile  + " this will be overwritten.");
             Files.delete(contentsFile);
         }
 
-        LOGGER.info("Creating contents file for " + source.getName() + " at " + contentsFile);
+        LOGGER.info("Creating contents file for " + source.name() + " at " + contentsFile);
         Files.createDirectories(contentsFile.getParent());
 
         // Prepare the context for the template rendering
         Map<String, Object> context = new HashMap<>();
-        context.put("sourceName", source.getName());
+        context.put("sourceName", source.name());
 
-        // Load the development branch details into the context 
-        context.put("developmentBranchName", source.getDevelopmentBranch());
-        Path devIndexPath = getRelativeIndexPath(source, source.getDevelopmentBranch());
+        // Load the development branch details into the context
+        context.put("developmentBranchName", source.developmentBranch());
+        Path devIndexPath = getRelativeIndexPath(source, source.developmentBranch());
         context.put("developmentBranchIndexFile", devIndexPath.toString());
 
         // Load the tag details into the context
         List<Map<String, String>> tags = new ArrayList<>();
-        List<String> sortedTags = new ArrayList<>(source.getTags());
+        List<String> sortedTags = new ArrayList<>(source.tags());
         sortedTags.sort((a, b) -> b.compareTo(a));
 
         for (String tag : sortedTags) {
@@ -459,7 +376,7 @@ class DocBuilder implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception { 
+    public Integer call() throws Exception {
         LOGGER.info("Loading: " + sourcePath);
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(sourcePath));
@@ -483,14 +400,14 @@ class DocBuilder implements Callable<Integer> {
             sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
                 try {
                     //Download the dev branch
-                    processSource(ghFolderDownloader, source, source.getDevelopmentBranch(), false);
+                    processSource(ghFolderDownloader, source, source.developmentBranch(), false);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }));
 
             //Download each of the tags
-            for (String tag : source.getTags()) {
+            for (String tag : source.tags()) {
                 sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
                     try {
                         processSource(ghFolderDownloader, source, tag, true);
