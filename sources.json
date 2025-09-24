@@ -5,7 +5,7 @@
         "sourceRepository": "console", 
         "developmentBranch": "main",
         "docsFolderPath": "docs/sources",
-        "tags":["0.8.3"]
+        "tags":["0.8.3", "0.9.0"]
     },
     {
         "name": "Flink SQL Runner",
@@ -13,7 +13,7 @@
         "sourceRepository": "flink-sql", 
         "developmentBranch": "main",
         "docsFolderPath": "docs",
-        "tags":["0.2.0"] 
+        "tags":["0.2.0", "0.4.0"] 
     },
     {
         "name": "Flink SQL Tutorials",
