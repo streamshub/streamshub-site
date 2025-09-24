@@ -36,6 +36,41 @@ enableGitInfo = true
 [markup.asciidocExt.attributes]
     source-highlighter = 'rouge'
 
+# Menu at the top of the landing page
+[menu]
+[[menu.home]]
+  name = "Blog"
+  pageRef = "/blog/2025-01-13-Hello_World/"
+  weight = 1
+
+[[menu.home]]
+  name = "Documentation"
+  url = "#"
+  weight = 2
+
+[[menu.home]]
+  name = "Console"
+  pageRef = "/docs/StreamsHub-Console/"
+  weight = 20
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "Runner"
+  pageRef = "/docs/Flink-SQL-Runner/"
+  weight = 21
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "Tutorials"
+  pageRef = "/docs/Flink-SQL-Tutorials/main/"
+  weight = 22
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "GitHub"
+  url = "https://github.com/streamshub"
+  weight = 3
+
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
