@@ -3,6 +3,8 @@ languageCode = 'en-us'
 title = 'StreamsHub'
 theme = 'hugo-book'
 
+copyright = '[© Apache License 2.0](https://opensource.org/license/apache-2-0)'
+
 # Book configuration
 disablePathToLower = true
 enableGitInfo = true
@@ -34,6 +36,41 @@ enableGitInfo = true
 [markup.asciidocExt.attributes]
     source-highlighter = 'rouge'
 
+# Menu at the top of the landing page
+[menu]
+[[menu.home]]
+  name = "Blog"
+  pageRef = "/blog/2025-01-13-Hello_World/"
+  weight = 1
+
+[[menu.home]]
+  name = "Documentation"
+  url = "#"
+  weight = 2
+
+[[menu.home]]
+  name = "Console"
+  pageRef = "/docs/StreamsHub-Console/"
+  weight = 20
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "Runner"
+  pageRef = "/docs/Flink-SQL-Runner/"
+  weight = 21
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "Tutorials"
+  pageRef = "/docs/Flink-SQL-Tutorials/main/"
+  weight = 22
+  parent = "Documentation"
+
+[[menu.home]]
+  name = "GitHub"
+  url = "https://github.com/streamshub"
+  weight = 3
+
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
@@ -57,28 +94,23 @@ enableGitInfo = true
   # For backward compatibility you can set '*' to render all sections to menu. Acts same as '/'
   BookSection = '/'
 
-  # Set source repository location.
-  # Used for 'Last Modified' and 'Edit this page' links.
-  BookRepo = 'https://github.com/streamshub/streamshub-site'
+  # (Optional, default none) Set template for commit link for the page. Requires enableGitInfo.
+  # When set enabled 'Last Modified' and a link to the commit in the footer of the page.
+  # Param is executed as template using .Site, .Page and .GitInfo as context.
+  # BookLastChangeLink = 'https://github.com/alex-shpak/hugo-book/commit/{{ .GitInfo.Hash }}'
 
-  # (Optional, default 'commit') Specifies commit portion of the link to the page's last modified
-  # commit hash for 'doc' page type.
-  # Requires 'BookRepo' param.
-  # Value used to construct a URL consisting of BookRepo/BookCommitPath/<commit-hash>
-  # Github uses 'commit', Bitbucket uses 'commits'
-  # BookCommitPath = 'commit'
+  # (Optional, default none) Set template for edit page link.
+  # When set enabled 'Edit this page' link in the footer of the page.
+  # Param is executed as template using .Site, .Page and .Path as context.
+  # BookEditLink = 'https://github.com/alex-shpak/hugo-book/edit/main/exampleSite/{{ .Path }}'
 
-  # Enable "Edit this page" links for 'doc' page type.
-  # Disabled by default. Uncomment to enable. Requires 'BookRepo' param.
-  # Edit path must point to root directory of repo.
-  # BookEditPath = 'edit/main/exampleSite'
-
-  # Configure the date format used on the pages
+  # (Optional, default 'January 2, 2006') Configure the date format used on the pages
   # - In git information
   # - In blog posts
+  # https://gohugo.io/functions/time/format/
   BookDateFormat = 'January 2, 2006'
 
-  # (Optional, default true) Enables search function with flexsearch,
+  # (Optional, default true) Enables search function with fuse.js,
   # Index is built on fly, therefore it might slowdown your website.
   # Configuration for indexing can be adjusted in i18n folder per language.
   # BookSearch = true
