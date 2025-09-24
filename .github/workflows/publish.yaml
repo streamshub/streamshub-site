@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.147.8
+      DART_SASS_VERSION: 1.93.2
     steps:
       - name: Install Hugo CLI
         run: |
@@ -36,7 +37,10 @@ jobs:
           sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install Dart Sass
-        run: sudo snap install dart-sass
+        run: |
+          wget -O ${{ runner.temp }}/dart-sass.tar.gz https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64-musl.tar.gz
+          tar xvf ${{ runner.temp }}/dart-sass.tar.gz --directory=${{ runner.temp }}/
+          echo "${{ runner.temp }}/dart-sass" >> $GITHUB_PATH
 
       - name: Install asciidoctor and ruby-rouge
         run: sudo apt -y install asciidoctor ruby-rouge
