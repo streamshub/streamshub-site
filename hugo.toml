@@ -3,6 +3,8 @@ languageCode = 'en-us'
 title = 'StreamsHub'
 theme = 'hugo-book'
 
+copyright = '[© Apache License 2.0](https://opensource.org/license/apache-2-0)'
+
 # Book configuration
 disablePathToLower = true
 enableGitInfo = true
