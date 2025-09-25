@@ -5,7 +5,11 @@ layout = "landing"
 
 <div class="book-hero">
 
-# StreamsHub {anchor=false}
+<div class="landing-logo">
+    <img src="/favicon.svg" alt="Logo">
+    <h1>StreamsHub</h1>
+</div>
+
 Open source resources for building real-time event-driven services and data-pipelines on Kubernetes.
 
 {{< badge style="default" title="License" value="Apache-2.0" >}}
