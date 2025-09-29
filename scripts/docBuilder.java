@@ -64,7 +64,7 @@ record Source(
         String sourceOwner,
         String sourceRepository,
         String developmentBranch,
-        String docsFolderPath,
+        Path docsFolderPath,
         List<String> tags, boolean skipContentsPageCreation
 ) {}
 
@@ -81,7 +81,7 @@ class GitHubFolderDownloader {
         this.mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     
-    public void downloadFolder(String owner, String repo, String ref, String path, Path destPath) throws IOException, URISyntaxException {
+    public void downloadFolder(String owner, String repo, String ref, Path path, Path destPath) throws IOException, URISyntaxException {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         // Create destination directory if it doesn't exist
@@ -91,35 +91,43 @@ class GitHubFolderDownloader {
         Files.createDirectories(destPath);
         
         // Get contents of the folder
-        String contentsUrl = String.format("%s/repos/%s/%s/contents/%s?ref=%s", 
-            GITHUB_API_BASE, owner, repo, path, ref);
+        String contentsUrl = String.format("%s/repos/%s/%s/git/trees/%s?recursive=%s",
+            GITHUB_API_BASE, owner, repo, ref, true);
         
-        List<GitHubContent> contents = mapper.readValue(
+        GitHubTreeResponse treeResponse = mapper.readValue(
             makeApiRequest(contentsUrl),
-            new TypeReference<List<GitHubContent>>() {}
+            new TypeReference<GitHubTreeResponse>() {}
         );
-        
-        for (GitHubContent item : contents) {
+
+        if (treeResponse.truncated()) {
+            // treeResponse.tree() array is truncated after 100,000 entries.
+            // If we hit this, something has probably gone wrong.
+            // https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28#get-a-tree
+            throw new RuntimeException(String.format("%s response is truncated", contentsUrl));
+        }
+
+        // Filter out anything that isn't part of the docs directory tree, then separate the remains into directories and files
+        List<GitHubTreeNode> treeNodes = treeResponse.tree().stream().filter(treeNode -> treeNode.path.startsWith(path)).toList();
+        List<GitHubTreeNode> directoryTreeNodes = treeNodes.stream().filter(treeNode -> treeNode.type().equals("tree")).toList();
+        List<GitHubTreeNode> fileTreeNodes = treeNodes.stream().filter(treeNode -> treeNode.type().equals("blob")).toList();
+
+        // Create the directories ahead of time so the files have somewhere to go
+        for (GitHubTreeNode treeNode : directoryTreeNodes) {
+            // relativize() to remove the source's docs folder path e.g. 'docs/index.md' -> '0.4.0/index.md'
+            Path relativeNodePath = path.relativize(treeNode.path());
+            Files.createDirectories(destPath.resolve(relativeNodePath));
+        }
+
+        // Download the files
+        for (GitHubTreeNode treeNode : fileTreeNodes) {
             futures.add(CompletableFuture.runAsync(() -> {
+                // Download file
                 try {
-                    String type = item.type();
-                    String itemPath = item.path();
-                    String itemName = item.name();
+                    Path nodePath = treeNode.path();
+                    String downloadUrl = String.format("https://raw.githubusercontent.com/%s/%s/%s/%s", owner, repo, ref, nodePath);
 
-                    if ("file".equals(type)) {
-                            // Download file
-                            String downloadUrl = item.download_url();
-                            if (downloadUrl == null) {
-                                // For some refs, we need to fetch the raw content differently
-                                downloadUrl = String.format("https://raw.githubusercontent.com/%s/%s/%s/%s",
-                                        owner, repo, ref, itemPath);
-                            }
-
-                            downloadFile(downloadUrl, destPath.resolve(itemName));
-                    } else if ("dir".equals(type)) {
-                            // Recursively download subdirectory
-                            downloadFolder(owner, repo, ref, itemPath, destPath.resolve(itemName));
-                    }
+                    Path relativeNodePath = path.relativize(nodePath);
+                    downloadFile(downloadUrl, destPath.resolve(relativeNodePath));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -168,8 +176,9 @@ class GitHubFolderDownloader {
         }
     }
     
-    // Record to represent GitHub content
-    public record GitHubContent(String type, String path, String name, String download_url) {}
+    // Records to represent GitHub tree
+    public record GitHubTreeNode(Path path, String mode, String type, String sha, int size, String url) {}
+    public record GitHubTreeResponse(String sha, String url, List<GitHubTreeNode> tree, Boolean truncated) {}
 }
 
 class FileTools {
