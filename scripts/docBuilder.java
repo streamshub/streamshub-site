@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -75,13 +76,17 @@ class GitHubFolderDownloader {
     private static final String GITHUB_API_BASE = "https://api.github.com";
     private final String accessToken;
     private final ObjectMapper mapper;
+
+    // https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#about-secondary-rate-limits
+    private static final int GITHUB_CONCURRENT_REQUEST_LIMIT = 100;
+    private static final Semaphore GITHUB_CONCURRENT_REQUEST_AVAILABLE = new Semaphore(GITHUB_CONCURRENT_REQUEST_LIMIT - 10, true);
     
     public GitHubFolderDownloader(String accessToken) {
         this.accessToken = accessToken;
         this.mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
     
-    public void downloadFolder(String owner, String repo, String ref, Path path, Path destPath) throws IOException, URISyntaxException {
+    public void downloadFolder(String owner, String repo, String ref, Path path, Path destPath) throws IOException, URISyntaxException, InterruptedException {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         // Create destination directory if it doesn't exist
@@ -137,7 +142,9 @@ class GitHubFolderDownloader {
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
     
-    private String makeApiRequest(String apiUrl) throws IOException, URISyntaxException {
+    private String makeApiRequest(String apiUrl) throws IOException, URISyntaxException, InterruptedException {
+        GITHUB_CONCURRENT_REQUEST_AVAILABLE.acquire();
+
         URL url = new URI(apiUrl).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         
@@ -157,11 +164,15 @@ class GitHubFolderDownloader {
                 response.append(line);
             }
         }
+
+        GITHUB_CONCURRENT_REQUEST_AVAILABLE.release();
         
         return response.toString();
     }
     
-    private void downloadFile(String downloadUrl, Path destPath) throws IOException, URISyntaxException {
+    private void downloadFile(String downloadUrl, Path destPath) throws IOException, URISyntaxException, InterruptedException {
+        GITHUB_CONCURRENT_REQUEST_AVAILABLE.acquire();
+
         URL url = new URI(downloadUrl).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         
@@ -174,6 +185,8 @@ class GitHubFolderDownloader {
             Files.copy(in, destPath, 
                 StandardCopyOption.REPLACE_EXISTING);
         }
+
+        GITHUB_CONCURRENT_REQUEST_AVAILABLE.release();
     }
     
     // Records to represent GitHub tree
@@ -295,6 +308,9 @@ class DocBuilder implements Callable<Integer> {
                 LOGGER.error(
                     "Unable to download folder for: " + source.name() + " - " + versionReference +". Is the version string valid?",
                     fileNotFoundError);
+            } catch (InterruptedException e) {
+                LOGGER.warn("Interrupted!", e);
+                Thread.currentThread().interrupt();
             }
 
         }
