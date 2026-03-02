@@ -45,8 +45,21 @@ You will also need [asciidoctor](https://asciidoctor.org/) installed to build mo
 
 ### Building the site locally
 
+This site uses a hugo theme installed via a git submodule. 
+If you have just cloned the repo then run the following command to pull the theme:
+
+```shell
+git submodule update --init --recursive
+```
+
 You can build the site by running `hugo` from the repository root.
+
+```shell
+hugo build
+```
+
 Or run a live preview server by running:
+
 ```shell
 hugo server --buildDrafts --disableFastRender  
 ```
