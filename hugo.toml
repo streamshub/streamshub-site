@@ -49,21 +49,27 @@ enableGitInfo = true
   weight = 2
 
 [[menu.home]]
+  name = "Developer Quick-Start"
+  pageRef = "/docs/StreamsHub-Developer-Quick-Start/main/"
+  weight = 20
+  parent = "Documentation"
+
+[[menu.home]]
   name = "Console"
   pageRef = "/docs/StreamsHub-Console/"
-  weight = 20
+  weight = 21
   parent = "Documentation"
 
 [[menu.home]]
   name = "Runner"
   pageRef = "/docs/Flink-SQL-Runner/"
-  weight = 21
+  weight = 22
   parent = "Documentation"
 
 [[menu.home]]
   name = "Tutorials"
   pageRef = "/docs/Flink-SQL-Tutorials/main/"
-  weight = 22
+  weight = 23
   parent = "Documentation"
 
 [[menu.home]]
