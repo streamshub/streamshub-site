@@ -1,5 +1,13 @@
 [
     {
+        "name": "StreamsHub Developer Quick-Start",
+        "sourceOwner": "streamshub",
+        "sourceRepository": "developer-quickstart", 
+        "developmentBranch": "main",
+        "docsFolderPath": "docs",
+        "tags":[]
+    },
+    {
         "name": "StreamsHub Console",
         "sourceOwner": "streamshub",
         "sourceRepository": "console", 
