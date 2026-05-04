@@ -39,42 +39,18 @@ enableGitInfo = true
 # Menu at the top of the landing page
 [menu]
 [[menu.home]]
-  name = "Blog"
-  pageRef = "/blog/2025-01-13-Hello_World/"
+  name = "Explore"
+  pageRef = "/explore/"
   weight = 1
 
 [[menu.home]]
-  name = "Documentation"
-  url = "#"
+  name = "Announcements"
+  pageRef = "/announcements/"
   weight = 2
 
 [[menu.home]]
-  name = "Developer Quick-Start"
-  pageRef = "/docs/StreamsHub-Developer-Quick-Start/main/"
-  weight = 20
-  parent = "Documentation"
-
-[[menu.home]]
-  name = "Console"
-  pageRef = "/docs/StreamsHub-Console/"
-  weight = 21
-  parent = "Documentation"
-
-[[menu.home]]
-  name = "Runner"
-  pageRef = "/docs/Flink-SQL-Runner/"
-  weight = 22
-  parent = "Documentation"
-
-[[menu.home]]
-  name = "Tutorials"
-  pageRef = "/docs/Flink-SQL-Tutorials/main/"
-  weight = 23
-  parent = "Documentation"
-
-[[menu.home]]
   name = "Community"
-  pageRef = "/community/"
+  url = "/community/"
   weight = 3
 
 [[menu.home]]
@@ -124,7 +100,7 @@ enableGitInfo = true
   # (Optional, default true) Enables search function with fuse.js,
   # Index is built on fly, therefore it might slowdown your website.
   # Configuration for indexing can be adjusted in i18n folder per language.
-  # BookSearch = true
+  BookSearch = true
 
   # (Optional, default true) Enables comments template on pages
   # By default partals/docs/comments.html includes Disqus template

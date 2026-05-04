@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html
+  lang="{{ default .Site.Language.Lang .Site.LanguageCode }}"
+  dir="{{ default "ltr" .Site.Language.LanguageDirection }}"
+>
+<head>
+  {{ partial "docs/html-head" . }}
+  {{ partial "docs/inject/head" . }}
+</head>
+<body
+  dir="{{ default "ltr" .Site.Language.LanguageDirection }}"
+  class="book-kind-{{ .Kind }} book-type-{{ .Type }} book-layout-{{ .Layout }}"
+>
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  {{ partial "docs/navbar-header.html" . }}
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="main-container flex">
+    {{ template "menu-container" . }}
+    {{ template "main-container" . }}
+  </main>
+</body>
+</html>
+
+{{ define "header" }}
+{{ end }}
+
+{{ define "menu" }}
+  {{ partial "docs/menu" . }}
+{{ end }}
+
+{{ define "menu-container" }}
+<aside class="book-menu">
+  <div class="book-menu-content">
+    {{ template "menu" . }}
+  </div>
+</aside>
+{{ end }}
+
+{{ define "main-container" }}
+<div class="book-page">
+  <header class="book-header">
+    {{ template "header" . }}
+  </header>
+
+  <!-- Page Content -->
+  {{ template "main" . }}
+
+  <footer class="book-footer">
+    <!-- Footer under page content -->
+    {{ template "footer" . }}
+  </footer>
+  <label for="menu-control" class="hidden book-menu-overlay"></label>
+</div>
+{{ end }}
+
+{{ define "main" }}
+  <article class="markdown book-article">
+    {{- .Content -}}
+  </article>
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "docs/footer" . }}
+{{ end }}
+

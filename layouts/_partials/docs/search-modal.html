@@ -1,0 +1,61 @@
+{{ if default true .Site.Params.BookSearch }}
+<!-- Search trigger button in navbar -->
+<button class="search-trigger" id="search-trigger" aria-label="Search">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <path d="m21 21-4.35-4.35"></path>
+  </svg>
+  <span>Search</span>
+</button>
+
+<!-- Search modal -->
+<div class="search-modal hidden" id="search-modal">
+  <div class="search-modal-backdrop" id="search-backdrop"></div>
+  <div class="search-modal-content">
+    <div class="search-modal-header">
+      <input type="text" id="book-search-input" placeholder="{{ i18n "Search" }}" aria-label="{{ i18n "Search" }}" maxlength="64" data-hotkeys="s/" autofocus />
+      <button class="search-close" id="search-close" aria-label="Close search">×</button>
+    </div>
+    <div class="book-search-spinner hidden"></div>
+    <ul id="book-search-results"></ul>
+  </div>
+</div>
+
+<script>
+(function() {
+  const modal = document.getElementById('search-modal');
+  const trigger = document.getElementById('search-trigger');
+  const close = document.getElementById('search-close');
+  const backdrop = document.getElementById('search-backdrop');
+  const input = document.getElementById('book-search-input');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => input.focus(), 100);
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  trigger.addEventListener('click', openModal);
+  close.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Ctrl+K or Cmd+K to open
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      openModal();
+    }
+    // Escape to close
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+})();
+</script>
+{{ end }}
