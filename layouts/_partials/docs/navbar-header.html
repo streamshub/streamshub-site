@@ -4,7 +4,15 @@
   </div>
 
   <div class="navbar-menu">
-    {{ partial "docs/menu-items.html" . }}
+    <ul>
+    {{ range site.Menus.home }}
+      <li>
+        <a href="{{ .URL }}">
+          {{ .Name }}
+        </a>
+      </li>
+    {{ end }}
+    </ul>
   </div>
 
   <div class="navbar-right">

@@ -14,9 +14,11 @@
   <input type="checkbox" class="hidden toggle" id="menu-control" />
   {{ partial "docs/navbar-header.html" . }}
   <input type="checkbox" class="hidden toggle" id="toc-control" />
-  <main class="main-container flex">
+  <main class="main-container">
     {{ template "menu-container" . }}
     {{ template "main-container" . }}
+    {{ template "footer" . }}
+    {{ template "copyright" . }}
   </main>
 </body>
 </html>
@@ -41,15 +43,8 @@
   <header class="book-header">
     {{ template "header" . }}
   </header>
-
   <!-- Page Content -->
   {{ template "main" . }}
-
-  <footer class="book-footer">
-    <!-- Footer under page content -->
-    {{ template "footer" . }}
-  </footer>
-  <label for="menu-control" class="hidden book-menu-overlay"></label>
 </div>
 {{ end }}
 
@@ -60,6 +55,15 @@
 {{ end }}
 
 {{ define "footer" }}
-  {{ partial "docs/footer" . }}
+  {{ partial "docs/footer-menu" . }}
+{{ end }}
+
+
+{{ define "copyright" }}
+{{ if .Site.Copyright }}
+<div class="book-copyright flex justify-center">
+  {{ partial "docs/copyright" . }}
+</div>
+{{ end }}
 {{ end }}
 

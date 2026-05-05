@@ -3,18 +3,19 @@ linkTitle = "Home"
 layout = "landing"
 +++
 
-<div class="book-hero">
-<div class="book-hero-container">
-  <img class="book-hero-icon" src="img/streamshub_icon_default_512px.png"/>
-  <div class="book-hero-content">
-    <h1>Open source resources for building real-time event-driven services and data-pipelines on Kubernetes.</h1>
-    <br>
-    <p>StreamsHub provides a curated set of open source projects, templates, and tools to support event-driven architectures, data pipelines, real-time data queries and more.<p>
-    {{<button href="/explore/" class="btn-full btn-large" >}}Explore{{</button>}}
-    {{<button href="/docs/" class="btn-large" >}}Documentation{{</button>}}
-  </div>
-</div>
-</div>
+<section class="page-section">
+<h1>What is streamshub?</h1>
+<p>StreamsHub provides a set of open source projects which support event-driven architectures running on Kubernetes.</p>
+<img src="img/streamshub-architecture-v2-dark-03.png" alt="" class="streamshub-architecture">
+</section>
+
+<section class="page-section">
+<h1>Open source stack for Kafka</h1>
+<p>StreamsHub projects give open source options for working with Event-Driven architectures with Apache Kafka. 
+StreamsHub combines with other open-source projects like <a href="https://strimzi.io/">Strimzi</a> and <a href="https://kroxylicious.io/">Kroxylicious</a> to provide tools for running Kafka proxies and the UI console in Kubernetes.</p>
+<h2>Integrate with Apicurio registry for schema management</h2>
+<p>The Apicurio registry enforces message syntax and format via schemas and integrates with both the Console and Kroxylicious proxy. Filters can be applied to messages using Kroxylicious to add security, resilience and reliability to your event-driven applications.</p>
+</section>
 
 <section class="page-section">
 <h1>StreamsHub Projects</h1>
@@ -40,5 +41,33 @@ layout = "landing"
   Based on the StreamsHub [Flink SQL Examples](https://github.com/streamshub/flink-sql-examples) repository.
   {{< /card >}}
 {{% /columns %}}
+</section>
 
-<section>
+<section class="page-section">
+<h1>Explore StreamsHub</h1>
+{{% columns %}}
+- {{< card class="project-card card-gradient" >}}
+    <div class="card-with-icon">
+      <img src="img/icons/pf-icon-private.png" alt="">
+      <h1>Secure authentication with StreamsHub</h1>
+      <p>Learn how to set up secure authentication for you applications and users with StreamsHub</p>
+    </div>
+  {{< /card >}}
+
+- {{< card class="project-card card-gradient" >}}
+    <div class="card-with-icon">
+      <img src="img/icons/fa-microchip.png" alt="">
+      <h1>Using the Strimzi MCP</h1>
+      <p>Learn how to make the most of Strimzi in your app development with the Strimzi MCP server.</p>
+    </div>
+  {{< /card >}}
+
+- {{< card class="project-card card-gradient" >}}
+    <div class="card-with-icon">
+      <img src="img/icons/pf-icon-monitoring.png" alt="">
+      <h1>Displaying metrics using Prometheus</h1>
+      <p>Learn how to collect and expose metrics using Prometheus and StreamsHub.</p>
+    </div>
+  {{< /card >}}
+{{% /columns %}}
+</section>

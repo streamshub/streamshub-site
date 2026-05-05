@@ -9,6 +9,17 @@
 {{ define "main-container" }}
 <div class="landing-container">
     <article class="markdown book-article">
+    <div class="book-hero">
+          <img class="book-hero-icon" src="img/icons/streamshub_icon_default_512px.png"/>
+          <div class="book-hero-content">
+            <h1>Open source resources for building real-time event-driven services and data-pipelines on Kubernetes.</h1>
+            <br>
+            <p>StreamsHub provides a curated set of open source projects, templates, and tools to support event-driven architectures, data pipelines, real-time data queries and more.<p>
+            <br>
+            <button href="/explore/" class="btn-full btn-large" >Explore</button>
+            <button href="/docs/" class="btn-large" >Documentation</button>
+          </div>
+        </div>
         {{- .Content -}}
     </article>
 </div>
@@ -18,9 +29,6 @@
 <!-- -->
 {{ end }}
 
-{{ define "footer" }}
-<!-- -->
-{{ end }}
 
 
 

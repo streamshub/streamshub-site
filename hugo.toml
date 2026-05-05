@@ -58,6 +58,41 @@ enableGitInfo = true
   url = "https://github.com/streamshub"
   weight = 4
 
+
+[[menu.footer]]
+    name = "Projects"
+    identifier = "projects"
+    weight = 1
+
+[[menu.footer]]
+  name = "Console"
+  parent = "projects"
+  url = "/console"
+  weight = 1
+
+[[menu.footer]]
+  name = "Flink SQL Runner"
+  parent = "projects"
+  url = "/flink"
+  weight = 2
+
+[[menu.footer]]
+  name = "Community"
+  identifier = "community"
+  weight = 2
+
+[[menu.footer]]
+  name = "Slack"
+  parent = "community"
+  url = "https://streamshub-io.slack.com"
+  weight = 1
+
+[[menu.footer]]
+  name = "GitHub"
+  parent = "community"
+  url = "https://github.com/streamshub"
+  weight = 2
+
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
