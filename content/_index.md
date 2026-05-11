@@ -25,21 +25,21 @@ StreamsHub combines with other open-source projects like <a href="https://strimz
 {{% columns %}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [StreamsHub Console](/project/console/)
+  # [StreamsHub Console](/console/)
   UI for administrating [Apache Kafka](https://kafka.apache.org/) clusters.
 
   Delivers real-time insights for monitoring, managing, and optimizing each cluster.
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Flink SQL Runner](/project/flink-sql-runner/)
+  # [Flink SQL Runner](/flink-sql-runner/)
   Wrapper application and container image for use with [Flink Kubernetes Operator's](https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-main/) `FlinkDeployment` custom resource.
 
   Allows you to specify your SQL queries as arguments.
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Strimzi MCP Server](/project/strimzi-mcp/)
+  # [Strimzi MCP Server](/strimzi-mcp-server/)
   MCP server for Strimzi to make deploying, managing and developing with Strimzi quicker and easier.
   {{< /card >}}
 {{% /columns %}}

@@ -1,7 +1,6 @@
 +++
 title = '{{ sourceName }} Documentation'
 linkTitle = "{{ sourceName }}"
-
 +++
 ## In development documentation
 

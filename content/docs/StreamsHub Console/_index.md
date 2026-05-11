@@ -1,6 +1,7 @@
 +++
 title = 'StreamsHub Console Documentation'
 linkTitle = "StreamsHub Console"
+url = "/docs/console"
 +++
 ## In development documentation
 

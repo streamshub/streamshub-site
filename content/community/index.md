@@ -57,7 +57,7 @@ Want to get involved in the StreamsHub community and help build the best open-so
       </div>
       <h1>Strimzi</h1>
       <p>Run Apache Kafka on Kubernetes. Strimzi simplifies deploying and managing Kafka clusters on Kubernetes.</p>
-      <a href="">Learn more</a>
+      <a href="https://strimzi.io/">Learn more</a>
     </div>
   {{< /card >}}
 - {{< card class="project-card card-gradient" >}}
@@ -67,7 +67,7 @@ Want to get involved in the StreamsHub community and help build the best open-so
       </div>
       <h1>Kroxylicious</h1>
       <p>Kroxylicious, the snappy open source proxy for Apache Kafka®Topic encryption, policy-enforcement, multi-tenancy, audit and much more.</p>
-      <a href="">Learn more</a>
+      <a href="https://kroxylicious.io/">Learn more</a>
     </div>
   {{< /card >}}
 - {{< card class="project-card card-gradient" >}}
@@ -77,7 +77,7 @@ Want to get involved in the StreamsHub community and help build the best open-so
       </div>
       <h1>Apicurio</h1>
       <p>Open source toolset focused on API design, management, and schema registries.</p>
-      <a href="">Learn more</a>
+      <a href="https://www.apicur.io/">Learn more</a>
     </div>
   {{< /card >}}
 {{% /columns %}}

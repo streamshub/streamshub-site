@@ -2,6 +2,7 @@
 title: "StreamsHub Console"
 description: "Open-source web interface for managing and administering Kafka clusters. Provides real time monitoring and insights into the health and performance of your clusters, as well as topic metrics, user management and groups."
 layout: "single"
+url: "/console/"
 ---
 <section class="page-section">
 
@@ -31,7 +32,7 @@ Detailed broker information ensure you can always see the state of your cluster.
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Documentation](/project/console/docs)
+  # [Documentation](/docs/console)
   Comprehensive documentation for deploying, configuring and working with the Console. 
   </br>
   Archived documentation of previous versions is also available.

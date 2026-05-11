@@ -46,19 +46,19 @@ enableGitInfo = true
 [[menu.home]]
   name = "Console"
   parent = "projects"
-  url = "/project/console"
+  url = "/console"
   weight = 1
 
 [[menu.home]]
   name = "Flink SQL Runner"
   parent = "projects"
-  url = "/project/flink-sql-runner"
+  url = "/flink-sql-runner"
   weight = 2
 
 [[menu.home]]
   name = "Strimzi MCP Server"
   parent = "projects"
-  url = "/project/strimzi-mcp"
+  url = "/strimzi-mcp"
   weight = 3
 
 
@@ -91,19 +91,19 @@ enableGitInfo = true
 [[menu.footer]]
   name = "Console"
   parent = "projects"
-  url = "/project/console"
+  url = "/console"
   weight = 1
 
 [[menu.footer]]
   name = "Flink SQL Runner"
   parent = "projects"
-  url = "/project/flink-sql-runner"
+  url = "/flink-sql-runner"
   weight = 2
 
 [[menu.footer]]
   name = "Strimzi MCP Server"
   parent = "projects"
-  url = "/project/strimzi-mcp"
+  url = "/strimzi-mcp"
   weight = 3
 
 [[menu.footer]]
