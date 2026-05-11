@@ -1,0 +1,10 @@
+{{ define "main" }}
+  <section class="hero">
+    <h1>{{ .Title }}</h1>
+    <p>{{ .Params.description }}</p>
+  </section>
+
+  <section class="content">
+    {{ .Content }}
+  </section>
+{{ end }}

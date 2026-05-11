@@ -1,6 +1,9 @@
 +++
 linkTitle = "Home"
 layout = "landing"
+
+title = "Open source resources for building real-time event-driven services and data-pipelines on Kubernetes."
+description = "StreamsHub provides a curated set of open source projects, templates, and tools to support event-driven architectures, data pipelines, real-time data queries and more."
 +++
 
 <section class="page-section">
@@ -20,25 +23,24 @@ StreamsHub combines with other open-source projects like <a href="https://strimz
 <section class="page-section">
 <h1>StreamsHub Projects</h1>
 {{% columns %}}
+
 - {{< card title="Card" image="" class="project-card" >}}
-  # [StreamsHub Console](/docs/StreamsHub-Console/)
+  # [StreamsHub Console](/project/console/)
   UI for administrating [Apache Kafka](https://kafka.apache.org/) clusters.
 
   Delivers real-time insights for monitoring, managing, and optimizing each cluster.
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Flink SQL Runner](/docs/Flink-SQL-Runner/)
+  # [Flink SQL Runner](/project/flink-sql-runner/)
   Wrapper application and container image for use with [Flink Kubernetes Operator's](https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-main/) `FlinkDeployment` custom resource.
 
   Allows you to specify your SQL queries as arguments.
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Flink SQL Tutorials](/docs/Flink-SQL-Tutorials/main/)
-  Collection of tutorials covering many aspects of using Flink SQL.
-
-  Based on the StreamsHub [Flink SQL Examples](https://github.com/streamshub/flink-sql-examples) repository.
+  # [Strimzi MCP Server](/project/strimzi-mcp/)
+  MCP server for Strimzi to make deploying, managing and developing with Strimzi quicker and easier.
   {{< /card >}}
 {{% /columns %}}
 </section>

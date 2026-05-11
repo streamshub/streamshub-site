@@ -39,24 +39,48 @@ enableGitInfo = true
 # Menu at the top of the landing page
 [menu]
 [[menu.home]]
+  name = "Projects"
+  identifier = "projects"
+  weight = 1
+
+[[menu.home]]
+  name = "Console"
+  parent = "projects"
+  url = "/project/console"
+  weight = 1
+
+[[menu.home]]
+  name = "Flink SQL Runner"
+  parent = "projects"
+  url = "/project/flink-sql-runner"
+  weight = 2
+
+[[menu.home]]
+  name = "Strimzi MCP Server"
+  parent = "projects"
+  url = "/project/strimzi-mcp"
+  weight = 3
+
+
+[[menu.home]]
   name = "Explore"
   pageRef = "/explore/"
-  weight = 1
+  weight = 2
 
 [[menu.home]]
   name = "Announcements"
   pageRef = "/announcements/"
-  weight = 2
+  weight = 3
 
 [[menu.home]]
   name = "Community"
   url = "/community/"
-  weight = 3
+  weight = 4
 
 [[menu.home]]
   name = "GitHub"
   url = "https://github.com/streamshub"
-  weight = 4
+  weight = 5
 
 
 [[menu.footer]]
@@ -67,14 +91,20 @@ enableGitInfo = true
 [[menu.footer]]
   name = "Console"
   parent = "projects"
-  url = "/console"
+  url = "/project/console"
   weight = 1
 
 [[menu.footer]]
   name = "Flink SQL Runner"
   parent = "projects"
-  url = "/flink"
+  url = "/project/flink-sql-runner"
   weight = 2
+
+[[menu.footer]]
+  name = "Strimzi MCP Server"
+  parent = "projects"
+  url = "/project/strimzi-mcp"
+  weight = 3
 
 [[menu.footer]]
   name = "Community"

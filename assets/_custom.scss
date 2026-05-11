@@ -2,6 +2,21 @@ html {
   scrollbar-gutter: unset;
 }
 
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: $navbar-height;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex: 0 0 auto;
+}
+
 pre {
     margin-top: 1rem;
     margin-bottom: 1em;
@@ -10,8 +25,7 @@ pre {
 
 .main-container {
   position: relative;
-  max-width: 100vw;
-  top: $navbar-height;
+  max-width: 100%;
 }
 
 .landing-container {
@@ -131,6 +145,56 @@ pre {
   height: $navbar-height;
 }
 
+.navbar-menu > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: $streamshub-green-5;
+  border-radius: 8px;
+  padding: 0.25rem 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  list-style: none;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dropdown-menu li {
+  padding: 0;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 8px 16px;
+  white-space: nowrap;
+  color: $body-font-color;
+  text-decoration: none;
+
+  &:hover {
+    background: $streamshub-green-6;
+    color: $streamshub-green-7;
+  }
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
 
 /* Search trigger button */
 .search-trigger {
@@ -416,8 +480,9 @@ pre {
 }
 
 .book-footer {
+  flex-shrink: 0;
+  margin-top: auto;
   position: relative;
-  bottom: 0;
   width: 100%;
   padding: 4rem $page-content-x-padding;
   font-size: 1rem;
@@ -426,13 +491,12 @@ pre {
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  place-items: start;
 }
 
 .footer-menu {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  place-items: center;
+  justify-items: center;
   list-style: none;
   width: 100%;
 }
@@ -470,4 +534,59 @@ pre {
 
 .book-copyright {
   padding: 2rem;
+}
+
+.list-none ul {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none !important;
+}
+
+.border-none {
+  border: none !important;
+}
+
+.inline-header-card h1 {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.external-project-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 16px;
+  align-items: start;
+  height: 100%;
+}
+
+
+.external-project-icon {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  align-self: center;
+}
+
+.external-project-icon img {
+  width: 48px;
+  height: 48px;
+}
+
+.external-project-card h1 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+}
+
+.external-project-card p{
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+}
+
+.external-project-card a {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
 }

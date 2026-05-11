@@ -1,0 +1,28 @@
+<header class="navbar">
+  <div class="navbar-left">
+    {{ partial "docs/brand.html" . }}
+  </div>
+
+<div class="navbar-menu">
+  <ul>
+    {{ range site.Menus.home }}
+      {{ if .HasChildren }}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">{{ .Name }} ▾</a>
+          <ul class="dropdown-menu">
+            {{ range .Children }}
+              <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+            {{ end }}
+          </ul>
+        </li>
+      {{ else }}
+        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+      {{ end }}
+    {{ end }}
+  </ul>
+</div>
+
+  <div class="navbar-right">
+    {{ partial "search-modal.html" . }}
+  </div>
+</header>

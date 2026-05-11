@@ -12,14 +12,13 @@
   class="book-kind-{{ .Kind }} book-type-{{ .Type }} book-layout-{{ .Layout }}"
 >
   <input type="checkbox" class="hidden toggle" id="menu-control" />
-  {{ partial "docs/navbar-header.html" . }}
+  {{ partial "navbar-header.html" . }}
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="main-container">
-    {{ template "menu-container" . }}
     {{ template "main-container" . }}
-    {{ template "footer" . }}
-    {{ template "copyright" . }}
   </main>
+  {{ template "footer" . }}
+  {{ template "copyright" . }}
 </body>
 </html>
 
@@ -55,7 +54,7 @@
 {{ end }}
 
 {{ define "footer" }}
-  {{ partial "docs/footer-menu" . }}
+  {{ partial "footer-menu" . }}
 {{ end }}
 
 

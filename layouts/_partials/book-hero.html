@@ -1,0 +1,14 @@
+<div class="book-hero" {{ with .Params.hero_bg }}style="background-color: {{ . }}"{{ end }}>
+  {{ with .Image }}
+    <img src="{{ .url }}" class="{{ .class }}"/>
+  {{ end }}
+  <div class="book-hero-content">
+    <h1>{{ .Params.title }}</h1>
+    <p>{{ .Params.description }}</p>
+    <div class="hero-buttons">
+      {{ range .Buttons }}
+        <a href="{{ .url }}" class="{{ .class }}">{{ .label }}</a>
+      {{ end }}
+    </div>
+  </div>
+</div>
