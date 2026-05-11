@@ -368,23 +368,49 @@ pre {
 
 .book-hero {
   background: $streamshub-green-4;
-  top:0;
   position: relative;
   padding: 5% $page-content-x-padding;
   overflow: hidden;
-}
 
-.book-hero-content{
-  position: relative;
-  z-index: 3;
-}
+  // default: content sits above background image
+  .book-hero-content {
+    position: relative;
+    z-index: 3;
+  }
 
-.book-hero-icon {
-  position: absolute;
-  right: $page-content-x-padding;
-  top: -10;
-  transform: translateY(-15%) scale(1.5);
-  opacity: 0.35;
+  .book-hero-icon {
+    position: absolute;
+    right: $page-content-x-padding;
+    top: 0;
+    transform: translateY(-15%) scale(1.5);
+    opacity: 0.35;
+  }
+
+  // side-by-side variant
+  &--side {
+    .book-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .book-hero-content {
+      position: static;  // override relative/z-index from default
+    }
+
+    .book-hero-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        max-height: 300px;
+        width: auto;
+        opacity: 1;        // no fading like the background version
+      }
+    }
+  }
 }
 
 .navbar-menu ul {
@@ -589,4 +615,37 @@ pre {
   grid-column: 2;
   grid-row: 3;
   align-self: end;
+}
+
+.feature-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+  padding: 2rem 0;
+
+  &-image img {
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  // flip: image left, text right
+  &--flip {
+    .feature-section-text { order: 2; }
+    .feature-section-image { order: 1; }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    &--flip {
+      .feature-section-text { order: 1; }
+      .feature-section-image { order: 2; }
+    }
+  }
+}
+
+.feature-divider {
+  height: 10px;
+  background-color: $streamshub-green-1;
 }

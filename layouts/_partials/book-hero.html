@@ -1,14 +1,39 @@
-<div class="book-hero" {{ with .Params.hero_bg }}style="background-color: {{ . }}"{{ end }}>
-  {{ with .Image }}
-    <img src="{{ .url }}" class="{{ .class }}"/>
-  {{ end }}
-  <div class="book-hero-content">
-    <h1>{{ .Params.title }}</h1>
-    <p>{{ .Params.description }}</p>
-    <div class="hero-buttons">
-      {{ range .Buttons }}
-        <a href="{{ .url }}" class="{{ .class }}">{{ .label }}</a>
+<div class="book-hero {{ if eq .Layout "side" }}book-hero--side{{ end }}"
+     {{ with .Params.hero_bg }}style="background-color: {{ . }}"{{ end }}>
+
+  {{ if eq .Layout "side" }}
+    {{/* 2-column grid layout */}}
+    <div class="book-hero-grid">
+      <div class="book-hero-content">
+        <h1>{{ .Params.title }}</h1>
+        <p>{{ .Params.description }}</p>
+        <div class="hero-buttons">
+          {{ range .Buttons }}
+            <a href="{{ .url }}" class="{{ .class }}">{{ .label }}</a>
+          {{ end }}
+        </div>
+      </div>
+      {{ with .Image }}
+        <div class="book-hero-image">
+          <img src="{{ .url }}" class="{{ .class }}"/>
+        </div>
       {{ end }}
     </div>
-  </div>
+
+  {{ else }}
+    {{/* Default: background image layout */}}
+    {{ with .Image }}
+      <img src="{{ .url }}" class="{{ .class }}"/>
+    {{ end }}
+    <div class="book-hero-content">
+      <h1>{{ .Params.title }}</h1>
+      <p>{{ .Params.description }}</p>
+      <div class="hero-buttons">
+        {{ range .Buttons }}
+          <a href="{{ .url }}" class="{{ .class }}">{{ .label }}</a>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
 </div>

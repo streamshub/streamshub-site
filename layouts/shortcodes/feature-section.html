@@ -1,0 +1,15 @@
+{{ $count := .Page.Scratch.Get "featureCount" | default 0 }}
+{{ .Page.Scratch.Set "featureCount" (add $count 1) }}
+
+{{ if gt $count 0 }}
+  <div class="feature-divider"></div>
+{{ end }}
+
+<div class="feature-section {{ if mod $count 2 }}feature-section--flip{{ end }}">
+  <div class="feature-section-text">
+    {{ .Inner | markdownify }}
+  </div>
+  <div class="feature-section-image">
+    <img src="{{ .Get "image" }}" alt="" />
+  </div>
+</div>
