@@ -1,21 +1,17 @@
 {{/*
-  Per-project version picker, shown above the section tree on any docs OR quick-start page
-  belonging to one of the three projects. Renders nothing outside those pages (e.g. not on a
-  project's marketing home page or its community page).
+  Per-project version picker, shown above the section tree on any docs page belonging to one of
+  the three projects. Renders nothing outside those pages (e.g. not on a project's marketing home
+  page, its community page, or its Quick Start - Quick Start isn't itself versioned and doesn't
+  link into a specific doc version, so the picker doesn't apply there).
 
   Version pages are identified the same way as docs/menu-filetree.html: docBuilder tags every
   version folder's index page with title = the version string (e.g. "main", "0.8.3"). "main"
   (the development branch) is always the default/top entry; tagged versions sort numerically,
   newest first.
-
-  Quick Start lives as a sibling of docs (content/console/quick-start/), not nested inside it -
-  it isn't itself versioned, but the picker should still appear there (defaulting to "main") so
-  readers can jump straight to the full versioned documentation.
 */}}
 {{- $versionPattern := `^(main|[0-9]+(\.[0-9]+){1,2})$` -}}
 {{- $projectRoots := slice
   (dict "match" "/console/docs" "docs" "/console/docs")
-  (dict "match" "/console/quick-start" "docs" "/console/docs")
   (dict "match" "/flink-sql-runner/docs" "docs" "/flink-sql-runner/docs")
   (dict "match" "/strimzi-mcp-server/docs" "docs" "/strimzi-mcp-server/docs")
 -}}

@@ -965,6 +965,18 @@ footer {
   pre code {
     font-size: 12px;
   }
+
+  // The theme's table borders and its zebra-striped row background both resolve to the same
+  // color here (--gray-200/--gray-100 are both set to $streamshub-green-1 in _variables.scss),
+  // so the border is invisible on every striped row. Give just those rows' cells a border in the
+  // opposite/darker color ($streamshub-green-0, #02151b) so it actually shows up against the
+  // lighter striped background.
+  table tr:nth-child(2n) {
+    th,
+    td {
+      border-color: $streamshub-green-0;
+    }
+  }
 }
 
 .book-toc {

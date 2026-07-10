@@ -1,5 +1,5 @@
 +++
-title = '0.12.0'
+title = '0.12.6'
 [[cascade]]
     type = 'docs'
 +++include::attributes.adoc[]

@@ -3,6 +3,7 @@ title = 'StreamsHub Console Documentation'
 linkTitle = "Documentation"
 
 +++
+
 <div id="__redirect-target" style="display:none">
 
 [main](main/index.adoc)
@@ -22,10 +23,9 @@ linkTitle = "Documentation"
 
 ## Released versions documentation
 
-[0.9.0](0.9.0/index.adoc)
+[main](main/index.adoc)
 
-[0.8.3](0.8.3/index.adoc)
+[0.12.6](0.12.6/index.adoc)
 
-[0.12.0](0.12.0/index.adoc)
 
 </noscript>

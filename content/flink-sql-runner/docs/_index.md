@@ -3,6 +3,7 @@ title = 'Flink SQL Runner Documentation'
 linkTitle = "Documentation"
 
 +++
+
 <div id="__redirect-target" style="display:none">
 
 [main](main/index.adoc)
@@ -25,5 +26,6 @@ linkTitle = "Documentation"
 [0.4.0](0.4.0/index.adoc)
 
 [0.2.0](0.2.0/index.adoc)
+
 
 </noscript>

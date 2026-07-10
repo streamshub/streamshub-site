@@ -1,8 +1,9 @@
 +++
-title = 'StreamsHub Developer Quick-Start Documentation'
-linkTitle = "StreamsHub Developer Quick-Start"
+title = 'Quickstart Documentation'
+linkTitle = "Quickstart"
 
 +++
+
 <div id="__redirect-target" style="display:none">
 
 [main](main/_index.md)
@@ -21,5 +22,6 @@ linkTitle = "StreamsHub Developer Quick-Start"
 [main](main/_index.md)
 
 ## Released versions documentation
+
 
 </noscript>

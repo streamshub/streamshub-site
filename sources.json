@@ -1,6 +1,6 @@
 [
     {
-        "name": "StreamsHub Developer Quick-Start",
+        "name": "Quickstart",
         "outputPath": "console/quick-start",
         "sourceOwner": "streamshub",
         "sourceRepository": "developer-quickstart",
