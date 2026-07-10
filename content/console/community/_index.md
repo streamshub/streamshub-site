@@ -9,7 +9,7 @@ bookHidden = true
 <section class="page-section">
 {{% columns %}}
 
-- {{< card class="project-card inline-header-card" >}}
+- {{< card href="https://streamshub-io.slack.com" class="project-card inline-header-card" >}}
   # ![](/img/icons/slack.png) Slack
 
   Submit a request to join the StreamsHub Slack workspace. You should receive a quick response
@@ -17,7 +17,7 @@ bookHidden = true
   [Submit a request](https://streamshub-io.slack.com)
   {{< /card >}}
 
-- {{< card class="project-card inline-header-card" >}}
+- {{< card href="https://github.com/streamshub" class="project-card inline-header-card" >}}
   # ![](/img/icons/github.png) GitHub
 
   Submit a request to join the StreamsHub GitHub org. You should receive a quick response

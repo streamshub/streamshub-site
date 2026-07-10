@@ -914,7 +914,14 @@ footer {
 }
 
 .card-gradient {
-  background: linear-gradient(126.21deg, #0F3E3E 26.2%, #032936 52.28%) !important;
+  // Subtle single-hue wash (matches ".project-card"'s own gradient approach just above) rather
+  // than the previous two hard-coded colors with tight, close-together stops (26%/52%), which
+  // read as an abrupt diagonal seam instead of a smooth gradient.
+  background: linear-gradient(
+    to bottom right,
+    rgba($streamshub-green-6, 0.15),
+    rgba($streamshub-green-0, 1)
+  ) !important;
 }
 
 .streamshub-architecture {
@@ -959,15 +966,35 @@ footer {
   }
 }
 
+// The theme's "fixed" mixin makes ".book-menu-content"/".book-toc-content" `position: fixed` -
+// pinned to the *viewport*, top:6rem to bottom:0, regardless of how tall the actual page content
+// is. That's fine for the theme's own small per-page footer (nested inside .book-page, so it
+// naturally scrolls past underneath), but this site's global, multi-column footer sits *after*
+// ".container.flex" as a sibling - so the fixed sidebars kept floating on top of it once scrolled
+// far enough down. `position: sticky` fixes this *as long as the containing <aside> spans the
+// same height as .book-page* (the default `align-items: stretch` on ".container.flex" already
+// does this - do not override it to flex-start/start, or the <aside> shrinks to only its own
+// content height and the sticky sidebar detaches/unsticks long before the real page bottom,
+// instead of riding along until .book-page's actual end). With the aside stretched to match
+// .book-page, sticky keeps the sidebar pinned at top:6rem for the entire scroll and only lets go
+// exactly where .book-page (and therefore the aside) ends - i.e. right before the footer, never
+// overlapping it. max-height + overflow-y let a menu/TOC taller than the viewport scroll
+// internally instead of being clipped.
 .book-menu .book-menu-content,
-.book-toc .book-toc-content,
-.book-page {
+.book-toc .book-toc-content {
+  position: sticky !important;
   top: 6rem !important;
+  bottom: auto !important;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
 }
 
+// ".book-page" is a normal-flow element, not fixed - `position: relative; top: 6rem` visually
+// shifted it down without reserving that space in the flow, so the footer (the next sibling in
+// the DOM) rendered as if the page content were never shifted, overlapping the last ~6rem of
+// every docs/quick-start page's content. `margin-top` reserves the space properly.
 .book-page {
-  position: relative;
-  top: 6rem !important;
+  margin-top: 6rem;
 }
 
 .landing-logo {
@@ -1156,7 +1183,11 @@ footer {
 .book-card.external-project-card {
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: 16px;
+  // Same value for the grid gap (icon -> text) and the container padding (corner -> icon), same
+  // reasoning as ".card-with-icon" above - the icon is a sibling of ".markdown-inner", not
+  // wrapped by it, so it never got that element's own padding and was touching the card edge.
+  column-gap: $spacing-lg;
+  padding: $spacing-lg;
   align-items: start;
   height: 100%;
   text-align: left;
@@ -1180,6 +1211,8 @@ footer {
     display: flex;
     flex-direction: column;
     height: 100%;
+    // Padding now lives on the card itself (above) so the icon and text sides match.
+    padding: 0;
 
     h1 {
       margin: 0;
@@ -1238,6 +1271,12 @@ footer {
 }
 
 .feature-divider {
+  // Explicit width because ".page-section" is a flex column with align-items: flex-start - an
+  // empty <div> with no content would otherwise collapse to ~0 width instead of spanning the
+  // section. $streamshub-green-1 (#013440) is the correct design color (confirmed against the
+  // Figma source) - it just needed the width fix to actually be visible at all.
+  width: 100%;
+  align-self: stretch;
   height: 10px;
   background-color: $streamshub-green-1;
 }
@@ -1379,27 +1418,6 @@ pre {
 .announcement-date {
   color: var(--color-link);
   font-weight: bold;
-}
-
-.project-tabs {
-  display: flex;
-  border-bottom: 1px solid $streamshub-green-1;
-  margin-bottom: $spacing-xl;
-}
-
-.project-tab {
-  padding: $spacing-md $spacing-lg;
-  color: $body-font-color;
-
-  &--active {
-    color: var(--color-link);
-    border-bottom: 2px solid var(--color-link);
-  }
-
-  &--disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
 }
 
 .book-version-picker {

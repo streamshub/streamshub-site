@@ -4,6 +4,11 @@ description: "Open-source web interface for managing and administering Kafka clu
 layout: "single"
 ---
 <section class="page-section">
+<h1>Open-source administration Console of Kafka</h1>
+<p>The StreamsHub Console is an open-source solution for monitoring, administering and troubleshoot Kafka clusters running on Kubernetes. With a rich feature-set providing visibility into topics, brokers performance and metrics, users, groups and more, the StreamsHub Console is an essential tool for Kafka Cluster administrators who want detailed insights into their events.</p>
+</section>
+
+<section class="page-section">
 
 {{< feature-section image="/img/project/console/feature-browse-messages.png" >}}
 ## Browse messages
