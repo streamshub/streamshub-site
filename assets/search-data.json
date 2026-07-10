@@ -1,0 +1,63 @@
+[
+{{- /*
+  StreamsHub override of the hugo-book theme's assets/search-data.json.
+
+  Adds "project" (top-level site area: console, flink-sql-runner, strimzi-mcp-server, explore,
+  announcements, community, home) and "group" (sub-section within a project, e.g.
+  "Documentation" / "Quick Start") fields, used by the search modal's filter buttons and grouped
+  results list - see assets/search.js.
+
+  "project" is derived from the first segment of the page's own URL rather than Page.Section -
+  Section is unreliable for a lone leaf bundle sitting directly under content/ with no _index.md
+  sibling (e.g. content/community/index.md reports Section "" instead of "community"), even
+  though it works fine for nested pages (content/explore/<slug>/index.md correctly reports
+  "explore"). Splitting RelPermalink sidesteps that inconsistency entirely.
+*/ -}}
+{{- /* "home" added to the theme's original (page, section) kinds so the home page itself is
+       searchable/filterable as its own project bucket, per design. */ -}}
+{{- $pages := where .Site.Pages "Kind" "in" (slice "page" "section" "home") -}}
+{{- $pages = where $pages "Params.bookSearchExclude" "!=" true -}}
+{{- $pages = where $pages "Content" "!=" "" -}}
+{{- $projectLabels := dict
+  "console" "Console"
+  "flink-sql-runner" "Flink SQL Runner"
+  "strimzi-mcp-server" "Strimzi MCP Server"
+  "explore" "Explore"
+  "announcements" "Announcements"
+  "community" "Community"
+  "docs" "Flink SQL Tutorials"
+  "home" "Home"
+-}}
+{{ range $index, $page := $pages -}}
+  {{- $permalink := $page.RelPermalink -}}
+  {{- $project := "home" -}}
+  {{- $segments := split (strings.TrimPrefix "/" $permalink) "/" -}}
+  {{- if and $segments (ne (index $segments 0) "") -}}
+    {{- $project = index $segments 0 -}}
+  {{- end -}}
+  {{- $projectLabel := or (index $projectLabels $project) (humanize $project) -}}
+  {{- $group := "" -}}
+  {{- if in $permalink "/docs/" -}}
+    {{- $group = "Documentation" -}}
+  {{- else if in $permalink "/quick-start/" -}}
+    {{- $group = "Quick Start" -}}
+  {{- else if $page.Params.category -}}
+    {{- $group = title $page.Params.category -}}
+  {{- end -}}
+  {{- $sectionTitle := "" -}}
+  {{- with $page.Parent -}}
+    {{- $sectionTitle = partial "docs/title" . -}}
+  {{- end -}}
+  {{- if gt $index 0 }},{{ end }}
+  {
+    "id": {{ $index }},
+    "href": {{ $page.RelPermalink | jsonify }},
+    "title": {{ partial "docs/title" $page | jsonify }},
+    "section": {{ $sectionTitle | jsonify }},
+    "project": {{ $project | jsonify }},
+    "projectLabel": {{ $projectLabel | jsonify }},
+    "group": {{ $group | jsonify }},
+    "content": {{ $page.Plain | jsonify }}
+  }
+{{- end }}
+]

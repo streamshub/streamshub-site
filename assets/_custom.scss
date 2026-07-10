@@ -522,8 +522,8 @@ footer {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(100px);
   }
 
   &-content {
@@ -600,6 +600,47 @@ footer {
   }
 }
 
+// Row of per-project buttons above the results list - see assets/search.js. Hidden entirely
+// (rather than shown all-disabled) when there's no query or zero total matches, since a fully
+// grayed-out row with nothing to filter isn't useful.
+#book-search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding: 0 $spacing-lg $spacing-md;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.book-search-filter {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-lg;
+  border: 1px solid $streamshub-green-2;
+  background: transparent;
+  color: $streamshub-green-2;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.active {
+    background: $streamshub-green-2;
+    color: $streamshub-green-0;
+  }
+
+  &:disabled {
+    border-color: $streamshub-gray;
+    color: $streamshub-gray;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled):not(.active) {
+    background: rgba($streamshub-green-2, 0.15);
+  }
+}
+
 #book-search-results {
   overflow-y: auto;
   max-height: calc(70vh - 100px);
@@ -608,22 +649,54 @@ footer {
   list-style: none;
   backdrop-filter: grayscale(90%);
 
-  li {
-    padding: $spacing-md $spacing-lg;
-    border-bottom: 1px solid #f0f0f0;
+  // Project name, e.g. "Console" - not clickable, just a section label.
+  .book-search-heading {
+    padding: $spacing-md $spacing-lg $spacing-xs;
+    background: $streamshub-green-0;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $streamshub-green-2;
+    cursor: default;
+  }
+
+  // Sub-section within a project, e.g. "Documentation" / "Quick Start" - also just a label.
+  .book-search-subheading {
+    padding: $spacing-xs $spacing-lg $spacing-xs ($spacing-lg + $spacing-md);
+    background: $streamshub-green-0;
+    font-size: 0.75rem;
+    color: $streamshub-gray;
+    cursor: default;
+  }
+
+  .book-search-empty {
+    padding: $spacing-lg;
+    color: $streamshub-gray;
+    text-align: center;
+    cursor: default;
+  }
+
+  // The actual clickable matches. Padding lives on the <a> (not this <li>) so the whole row -
+  // not just the title text - is part of the click target, per design.
+  .book-search-result {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
     transition: background 0.15s;
 
-    &:first-of-type {
-      border-top: 1px solid #f0f0f0;
-    }
-
-    &:last-of-type {
-      border-bottom: 0px solid #f0f0f0;
-    }
-
     &:hover {
       background: $streamshub-green-1;
+    }
+
+    a {
+      padding: $spacing-sm $spacing-lg $spacing-sm ($spacing-lg + $spacing-md);
+    }
+
+    // Title and section live inside the same <a> now (so the whole row is clickable - see
+    // assets/search.js) - both default to inline, so force the title onto its own line same
+    // as before.
+    .book-search-result-title {
+      display: block;
     }
   }
 
