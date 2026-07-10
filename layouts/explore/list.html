@@ -1,0 +1,29 @@
+{{ define "main-container" }}
+<div class="landing-container">
+  <article class="markdown book-article">
+    {{ template "hero-template" . }}
+    <section class="page-section">
+      <div class="book-columns">
+        <ul class="explore-list">
+          {{ range .Pages.ByWeight }}
+          <li class="explore-list-item">
+            {{ with .Params.category }}<div class="explore-kicker explore-kicker--{{ . | urlize }}">{{ . | upper }}</div>{{ end }}
+            <h1><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
+            <p>{{ .Params.description | default .Summary }}</p>
+            <a href="{{ .RelPermalink }}" class="read-more">Read more</a>
+          </li>
+          {{ end }}
+        </ul>
+      </div>
+    </section>
+  </article>
+</div>
+{{ end }}
+
+{{ define "hero-template" }}
+    {{ partial "book-hero.html" (dict
+          "Params" .Params
+          "Image" (dict "url" "/img/icons/streamshub_icon_default_512px.png" "class" "book-hero-icon")
+        )
+    }}
+{{ end }}

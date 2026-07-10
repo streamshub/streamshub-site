@@ -1,0 +1,214 @@
+:_mod-docs-content-type: REFERENCE
+
+// Module included in the following assemblies:
+//
+// assembly-deploying.adoc
+
+[id='ref-authentication-options-{context}']
+= Using an OIDC provider to secure access to Kafka clusters
+
+[role="_abstract"]
+Enable secure console connections to Kafka clusters using an OIDC provider.
+Configure the console deployment to configure connections to any Identity Provider (IdP), such as Keycloak or Dex, that supports OpenID Connect (OIDC).
+Also define the subjects and roles for user authorization.
+To use group-based authorization as shown in the examples, configure an OIDC provider that includes a group membership claim, such as `groups`, in the generated access tokens.
+The security profiles can be configured for all Kafka cluster connections on a global level, though you can add roles and rules for specific Kafka clusters.
+
+An example configuration is provided in the following file: `examples/console/console-security-oidc.yaml`.
+
+The configuration introduces the following additional properties for console deployment:
+
+`security`:: Properties that define the connection details for the console to connect with the OIDC provider.
+`subjects`:: Specifies the subjects (users or groups) and their roles in terms of JWT claims or explicit subject names, determining access permissions.
+`roles`:: Defines the roles and associated access rules for users, specifying which resources (like Kafka clusters) they can interact with and what operations they are permitted to perform.
+
+.Example security configuration for all clusters
+[source,yaml]
+----
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: my-console
+spec:
+  hostname: my-console.<cluster_domain>
+  security:
+    oidc:
+      authServerUrl: <OIDC_discovery_URL>
+      clientId: <client_id>
+      clientSecret:
+        valueFrom:
+          secretKeyRef:
+            name: my-oidc-secret
+            key: client-secret
+      trustStore:
+        type: JKS
+        content:
+          valueFrom:
+            configMapKeyRef:
+              name: my-oidc-configmap
+              key: ca.jks
+        password:
+          value: truststore-password
+    subjects:
+      - claim: groups
+        include:
+          - <team_name_1>
+          - <team_name_2>
+        roleNames:
+          - developers
+      - claim: groups
+        include:
+          - <team_name_3>
+        roleNames:
+          - administrators
+      - include:
+          - <user_1>
+          - <user_2>
+        roleNames:
+          - administrators
+    roles:
+      - name: developers
+        rules:
+          - resources:
+              - kafkas
+            resourceNames:
+              - dev-cluster-a
+              - com.example.team.*
+              - /qa-cluster-[xy]/
+            privileges:
+              - 'ALL'
+      - name: administrators
+        rules:
+          - resources:
+              - kafkas
+            privileges:
+              - 'ALL'
+  kafkaClusters:
+    - name: console-kafka
+      namespace: kafka
+      listener: secure
+      credentials:
+        kafkaUser:
+          name: console-kafka-user1
+----
+
+* `security.oidc.authServerUrl` specifies the OIDC provider issuer URI used for endpoint discovery.
+* `security.oidc.clientId` specifies the client ID that identifies the console to the OIDC provider.
+* `security.oidc.clientSecret` specifies the client secret used to authenticate the console with the OIDC provider.
+* `security.oidc.clientSecret.valueFrom.secretKeyRef.name` specifies the name of the Kubernetes `Secret` that stores the client secret.
+* `security.oidc.clientSecret.valueFrom.secretKeyRef.key` specifies the key in the `Secret` that contains the client secret value.
+* `security.oidc.trustStore` optionally defines a truststore used to validate the OIDC provider TLS certificate. Supported formats include `JKS`, `PEM`, and `PKCS12`. Truststore content can be provided by using either a ConfigMap or a Secret.
+* `security.oidc.trustStore.password` optionally specifies the truststore password. The password can be provided as a plaintext value or by reference to a Secret. Plaintext values are not recommended for production environments.
+
+* `security.subjects` defines how users or groups are mapped to roles.
+** `security.subjects.claim` specifies the JWT claim used to identify users or groups.
+** `security.subjects.include` specifies the users or groups included under the configured claim.
+** `security.subjects.roleNames` specifies the roles assigned to the identified users or groups.
+** When no `claim` is specified, `security.subjects.include` specifies individual users by name.
+
+* `security.roles` defines the roles available for authorization.
+** `security.roles.rules.resources` specifies the resource types that the role can access.
+** `security.roles.rules.resourceNames` specifies which resources the role can access.
+*** Exact names can be specified, for example `dev-cluster-a`.
+*** Wildcard patterns can be specified, for example `com.example.team.*`.
+*** Regular expressions can be specified by enclosing the value in slashes, for example `/qa-cluster-[xy]/`.
+** `security.roles.rules.privileges` specifies the privileges granted to the role for the selected resources.
+
+If you want to specify roles and rules for individual Kafka clusters, add the details under `kafka.clusters[].security.roles[]`.
+In the following example, the `console-kafka` cluster allows developers to list and view selected Kafka resources.
+Administrators can also update certain resources.
+
+.Example security configuration for an individual cluster
+[source,yaml]
+----
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: my-console
+spec:
+  hostname: my-console.<cluster_domain>
+  # ...
+  kafkaClusters:
+    - name: console-kafka
+      namespace: kafka
+      listener: secure
+      credentials:
+        kafkaUser:
+          name: console-kafka-user1
+      security:
+        roles:
+          - name: developers
+            rules:
+              - resources:
+                  - topics
+                  - topics/records
+                  - consumerGroups
+                  - rebalances
+                privileges:
+                  - GET
+                  - LIST
+          - name: administrators
+            rules:
+              - resources:
+                  - topics
+                  - topics/records
+                  - consumerGroups
+                  - rebalances
+                  - nodes/configs
+                privileges:
+                  - GET
+                  - LIST
+              - resources:
+                  - consumerGroups
+                  - rebalances
+                privileges:
+                  - UPDATE
+----
+
+== Optional OIDC authentication properties
+
+The following properties can be used to further configure `oidc` authentication.
+These apply to any part of the console configuration that supports `authentication.oidc`, such as schema registries or metrics providers.
+
+grantType::
+Specifies the OIDC grant type to use. Required when using non-interactive authentication flows, where no user login is involved.
+Supported values:
++
+* `CLIENT`: Requires a client ID and secret.
+* `PASSWORD`: Requires a client ID and secret, plus user credentials (`username` and `password`) provided through `grantOptions`.
+
+grantOptions::
+Additional parameters specific to the selected grant type.
+Use `grantOptions` to provide properties such as `username` and `password` when using the `PASSWORD` grant type.
++
+[source,yaml]
+----
+oidc:
+  grantOptions:
+    username: my-user
+    password: <my_password>
+----
+
+method::
+Method for passing the client ID and secret to the OIDC provider.
+Supported values:
++
+* `BASIC`: (default) Uses HTTP Basic authentication.
+* `POST`: Sends credentials as form parameters.
+
+scopes::
+Optional list of access token scopes to request from the OIDC provider.
+Defaults are usually defined by the OIDC client configuration.
+Specify this property if access to the target service requires additional or alternative scopes not granted by default.
++
+[source,yaml]
+----
+oidc:
+  scopes:
+    - openid
+    - registry:read
+    - registry:write
+----
+
+absoluteExpiresIn::
+Optional boolean. If set to `true`, the `expires_in` token property is treated as an absolute timestamp instead of a duration.

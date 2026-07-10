@@ -51,7 +51,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hubspot.jinjava.Jinjava;
 
 /**
- * @param name The name of the top level folder for this source
+ * @param name The human-readable name for this source, used as the page title and (unless
+ *             contentsLinkTitle overrides it) the sidebar linkTitle
+ * @param contentsLinkTitle Optional override for the generated contents page's sidebar
+ *                          linkTitle. Defaults to {@code name} when not set. Useful when a
+ *                          source's docs are nested under a project that already carries the
+ *                          source's full name in the sidebar (e.g. "Documentation" under
+ *                          "StreamsHub Console", rather than repeating "StreamsHub Console"
+ *                          a second time one level down).
+ * @param outputPath The folder (relative to the docs root, may be nested e.g. "console/docs") that this source's
+ *                    files are downloaded into. Defaults to {@code name} when not set.
  * @param sourceOwner The GitHub repository owner org/user for this source
  * @param sourceRepository The GitHub repository for this source
  * @param developmentBranch This is the branch within the repo which will always be pulled on every build, so should be the main dev branch
@@ -62,12 +71,22 @@ import com.hubspot.jinjava.Jinjava;
  */
 record Source(
         String name,
+        String contentsLinkTitle,
+        Path outputPath,
         String sourceOwner,
         String sourceRepository,
         String developmentBranch,
         Path docsFolderPath,
         List<String> tags, boolean skipContentsPageCreation
-) {}
+) {
+    Path outputPathOrName() {
+        return outputPath != null ? outputPath : Paths.get(name);
+    }
+
+    String contentsLinkTitleOrName() {
+        return contentsLinkTitle != null ? contentsLinkTitle : name;
+    }
+}
 
 class GitHubFolderDownloader {
 
@@ -220,7 +239,7 @@ class DocBuilder implements Callable<Integer> {
     @Option(names = {"-c", "--config"}, description = "Path to the sources definition configuration file", defaultValue = "sources.json")
     private String sourcePath;
 
-    @Option(names = {"-r", "--root"}, description = "The root folder for all documentation downloads", defaultValue = "content/docs")
+    @Option(names = {"-r", "--root"}, description = "The root folder for all documentation downloads", defaultValue = "content")
     private String docsRoot;
 
     @Option(names = {"-td", "--templateDir"}, description = "Path to the template directory", defaultValue = defaultTemplatePath)
@@ -290,7 +309,7 @@ class DocBuilder implements Callable<Integer> {
 
         LOGGER.info("Downloading documentation for " + source.name() + " version " + versionReference);
 
-        Path outputDirectory = docsRootPath.resolve(source.name()).resolve(versionReference);
+        Path outputDirectory = docsRootPath.resolve(source.outputPathOrName()).resolve(versionReference);
         if (skipIfOutputFolderExists && Files.exists(outputDirectory)) {
             LOGGER.info("Folder already exists for " + source.name() + " " + versionReference + " so download will be skipped");
         } else {
@@ -328,7 +347,7 @@ class DocBuilder implements Callable<Integer> {
      */
     private Path getRelativeIndexPath(Source source, String tag) throws IOException {
 
-        Path tagBranchPath = docsRootPath.resolve(source.name()).resolve(tag);
+        Path tagBranchPath = docsRootPath.resolve(source.outputPathOrName()).resolve(tag);
         List<Path> tagIndexFiles = FileTools.findIndexFiles(tagBranchPath);
 
         if (tagIndexFiles.isEmpty()) {
@@ -363,7 +382,7 @@ class DocBuilder implements Callable<Integer> {
             return;
         }
 
-        Path contentsFile = docsRootPath.resolve(source.name()).resolve("_index.md");
+        Path contentsFile = docsRootPath.resolve(source.outputPathOrName()).resolve("_index.md");
         if (Files.exists(contentsFile)) {
             LOGGER.info("Contents file already exists for " + source.name() + " at " + contentsFile  + " this will be overwritten.");
             Files.delete(contentsFile);
@@ -375,6 +394,7 @@ class DocBuilder implements Callable<Integer> {
         // Prepare the context for the template rendering
         Map<String, Object> context = new HashMap<>();
         context.put("sourceName", source.name());
+        context.put("linkTitle", source.contentsLinkTitleOrName());
 
         // Load the development branch details into the context
         context.put("developmentBranchName", source.developmentBranch());

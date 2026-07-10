@@ -58,7 +58,7 @@ enableGitInfo = true
 [[menu.home]]
   name = "Strimzi MCP Server"
   parent = "projects"
-  url = "/strimzi-mcp"
+  url = "/strimzi-mcp-server"
   weight = 3
 
 
@@ -103,7 +103,7 @@ enableGitInfo = true
 [[menu.footer]]
   name = "Strimzi MCP Server"
   parent = "projects"
-  url = "/strimzi-mcp"
+  url = "/strimzi-mcp-server"
   weight = 3
 
 [[menu.footer]]

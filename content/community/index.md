@@ -9,31 +9,20 @@ layout = "single"
 <section class="page-section">
 {{% columns %}}
 
-- {{< card title="Discord" class="list-none border-none">}} 
-    <div class="inline-header-card">
-        <h1>
-          <img src="/img/icons/github.png" alt="">
-          <a href="https://github.com/streamshub">Github</a>
-        </h1>
-    </div>
-  
+- {{< card title="Discord" class="list-none border-none inline-header-card">}}
+  # ![](/img/icons/github.png) [Github](https://github.com/streamshub)
+
   - [Proposals](https://github.com/streamshub/proposals) - Submit a proposal for a new project or change to an existing project.
   - [Governance](https://github.com/streamshub/governance) - Community Governance (code of conduct, voting rules, etc.)
   - [This website](/) - Contribute documentation and tutorials.
   - [Issues and bugs](https://github.com/orgs/streamshub/repositories) - Submit issues, bug reports and code to any StreamsHub project.
   {{< /card >}}
 
-- {{< card title="Forum" logo="/images/forum.png" class="border-none">}}
-  
-  <div class="inline-header-card">
-    <h1>
-      <img src="/img/icons/slack.png" alt="">
-      <a href="https://streamshub-io.slack.com">Slack</a>
-    </h1>
-  </div>  
+- {{< card title="Forum" logo="/images/forum.png" class="border-none inline-header-card">}}
+  # ![](/img/icons/slack.png) [Slack](https://streamshub-io.slack.com)
 
   The main way to interact officially with the StreamsHub community is via the Proposals repository and Issues/PRs on the relevant project repositories. However, there is a community Slack workspace for more free-form conversations:
-  
+
   [Slack invite link](https://join.slack.com/t/streamshub-io/shared_invite/zt-3qv16izwl-1BpMlPVhv6D3F_OoxpybDg)
   {{< /card >}}
 
@@ -50,35 +39,23 @@ The StreamsHub community is usually held every two weeks. Anyone is welcome to j
 Want to get involved in the StreamsHub community and help build the best open-source tooling stack for Apache Kafka? Check out the ways to get involved or find out more information.
 
 {{% columns %}}
-- {{< card class="project-card card-gradient" >}}
-    <div class="external-project-card">
-      <div class="external-project-icon">
-        <img src="/img/icons/strimzi.png" alt="">
-      </div>
-      <h1>Strimzi</h1>
-      <p>Run Apache Kafka on Kubernetes. Strimzi simplifies deploying and managing Kafka clusters on Kubernetes.</p>
-      <a href="https://strimzi.io/">Learn more</a>
-    </div>
+- {{< card image="/img/icons/strimzi.png" class="project-card card-gradient external-project-card" >}}
+  # Strimzi
+  Run Apache Kafka on Kubernetes. Strimzi simplifies deploying and managing Kafka clusters on Kubernetes.
+
+  [Learn more](https://strimzi.io/)
   {{< /card >}}
-- {{< card class="project-card card-gradient" >}}
-    <div class="external-project-card">
-      <div class="external-project-icon">
-        <img src="/img/icons/kroxy.png" alt="">
-      </div>
-      <h1>Kroxylicious</h1>
-      <p>Kroxylicious, the snappy open source proxy for Apache Kafka®Topic encryption, policy-enforcement, multi-tenancy, audit and much more.</p>
-      <a href="https://kroxylicious.io/">Learn more</a>
-    </div>
+- {{< card image="/img/icons/kroxy.png" class="project-card card-gradient external-project-card" >}}
+  # Kroxylicious
+  Kroxylicious, the snappy open source proxy for Apache Kafka®Topic encryption, policy-enforcement, multi-tenancy, audit and much more.
+
+  [Learn more](https://kroxylicious.io/)
   {{< /card >}}
-- {{< card class="project-card card-gradient" >}}
-    <div class="external-project-card">
-      <div class="external-project-icon">
-        <img src="/img/icons/apicurio.png" alt="">
-      </div>
-      <h1>Apicurio</h1>
-      <p>Open source toolset focused on API design, management, and schema registries.</p>
-      <a href="https://www.apicur.io/">Learn more</a>
-    </div>
+- {{< card image="/img/icons/apicurio.png" class="project-card card-gradient external-project-card" >}}
+  # Apicurio
+  Open source toolset focused on API design, management, and schema registries.
+
+  [Learn more](https://www.apicur.io/)
   {{< /card >}}
 {{% /columns %}}
 </section>

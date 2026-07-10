@@ -39,3 +39,28 @@ $hint-colors: (
 
 $navbar-height: 64px;
 $page-content-x-padding: 10%;
+
+// Responsive breakpoints
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
+// Spacing scale
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 2.5rem;
+$spacing-3xl: 4rem;
+
+// Border radius scale
+$radius-sm: 3px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+
+// Responsive page padding
+$page-content-x-padding-mobile: 1.5rem;
+$page-content-x-padding-tablet: 5%;
+$page-content-x-padding-desktop: 10%;

@@ -1,0 +1,30 @@
+{{ define "main-container" }}
+<div class="landing-container">
+  <article class="markdown book-article">
+    {{ template "hero-template" . }}
+    <section class="page-section">
+      {{ range .Pages.ByDate.Reverse }}
+      <div class="announcement-entry">
+        <div class="announcement-date">{{ .Date.Format "January 2, 2006" }}</div>
+        <h1>{{ .Title }}</h1>
+        {{ if .Params.summary }}
+          <p>{{ .Params.summary | safeHTML }}</p>
+          <a href="{{ .RelPermalink }}" class="read-more">Read more</a>
+        {{ else }}
+          {{ .Content }}
+        {{ end }}
+      </div>
+      <div class="feature-divider"></div>
+      {{ end }}
+    </section>
+  </article>
+</div>
+{{ end }}
+
+{{ define "hero-template" }}
+    {{ partial "book-hero.html" (dict
+          "Params" .Params
+          "Image" (dict "url" "/img/icons/streamshub_icon_default_512px.png" "class" "book-hero-icon")
+        )
+    }}
+{{ end }}

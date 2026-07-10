@@ -47,29 +47,21 @@ StreamsHub combines with other open-source projects like <a href="https://strimz
 
 <section class="page-section">
 <h1>Explore StreamsHub</h1>
+<p>Take a look at some guides, tutorials and walk-throughs showing what is possible using StreamsHub. <a href="/explore/">View all</a></p>
 {{% columns %}}
-- {{< card class="project-card card-gradient" >}}
-    <div class="card-with-icon">
-      <img src="img/icons/pf-icon-private.png" alt="">
-      <h1>Secure authentication with StreamsHub</h1>
-      <p>Learn how to set up secure authentication for you applications and users with StreamsHub</p>
-    </div>
+- {{< card href="/explore/secure-authentication/" image="img/icons/pf-icon-private.png" class="project-card card-gradient card-with-icon" >}}
+  # Secure authentication with StreamsHub
+  Learn how to set up secure authentication for you applications and users with StreamsHub
   {{< /card >}}
 
-- {{< card class="project-card card-gradient" >}}
-    <div class="card-with-icon">
-      <img src="img/icons/fa-microchip.png" alt="">
-      <h1>Using the Strimzi MCP</h1>
-      <p>Learn how to make the most of Strimzi in your app development with the Strimzi MCP server.</p>
-    </div>
+- {{< card href="/explore/strimzi-mcp/" image="img/icons/fa-microchip.png" class="project-card card-gradient card-with-icon" >}}
+  # Using the Strimzi MCP
+  Learn how to make the most of Strimzi in your app development with the Strimzi MCP server.
   {{< /card >}}
 
-- {{< card class="project-card card-gradient" >}}
-    <div class="card-with-icon">
-      <img src="img/icons/pf-icon-monitoring.png" alt="">
-      <h1>Displaying metrics using Prometheus</h1>
-      <p>Learn how to collect and expose metrics using Prometheus and StreamsHub.</p>
-    </div>
+- {{< card href="/explore/prometheus-metrics/" image="img/icons/pf-icon-monitoring.png" class="project-card card-gradient card-with-icon" >}}
+  # Displaying metrics using Prometheus
+  Learn how to collect and expose metrics using Prometheus and StreamsHub.
   {{< /card >}}
 {{% /columns %}}
 </section>

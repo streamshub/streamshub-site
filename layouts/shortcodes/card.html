@@ -1,0 +1,55 @@
+{{- /* remove whitespace */ -}}
+{{- $content := .InnerDeindent -}}
+{{- $href := .Get "href" -}}
+
+{{- /*
+  Try to extract href from a heading-level markdown link if not provided, e.g. "# [Title](url)".
+  Deliberately scoped to a heading link only (not just any link anywhere in the card) - a card's
+  body can contain other, unrelated links (e.g. a "Learn more" link distinct from the card title)
+  that should stay as plain inline links rather than being promoted to the whole card's href.
+*/ -}}
+{{- if not $href -}}
+  {{- $matches := findRE `(?m)^[ \t]*#+\s*\[([^\]]+)\]\(([^)]+)\)` $content 1 -}}
+  {{- if $matches -}}
+    {{- $link := index $matches 0 -}}
+    {{- $hrefMatches := findRE `\(([^)]+)\)` $link 1 -}}
+    {{- if $hrefMatches -}}
+      {{- $hrefRaw := index $hrefMatches 0 -}}
+      {{- $href = trim (trim $hrefRaw "(") ")" -}}
+      {{- /* Remove the link from content but keep the text */ -}}
+      {{- $content = replaceRE `#\s*\[([^\]]+)\]\([^)]+\)` `# $1` $content -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /*
+  Render the card's inner markdown in isolation, then flatten it to a single line.
+  This shortcode's output is substituted inline wherever it's called - often inside a
+  markdown list item (e.g. via the "columns" shortcode). A multi-line HTML blob substituted
+  into a list item confuses goldmark's HTML-block/list-continuation rules (lines after the
+  first have no indentation to signal they're still part of the list item), which silently
+  truncates the list and leaks raw markup onto the page. A single line sidesteps that entirely.
+*/ -}}
+{{- $rendered := $content | $.Page.RenderString -}}
+{{- $renderedFlat := replaceRE `\s*\r?\n\s*` " " (trim $rendered "\n") -}}
+{{- /*
+  Goldmark auto-adds a "#" permalink anchor to every heading it renders (<a class="anchor"
+  href="#slug">#</a>). When this card also has an href (wrapping everything in its own <a>),
+  that anchor link ends up nested inside the card's <a> - invalid HTML that browsers recover
+  from by auto-closing/reparenting, silently dropping the rest of the card's content. These
+  permalink anchors are meaningless on a small card anyway, so strip them.
+*/ -}}
+{{- $renderedFlat = replaceRE `<a class="anchor"[^>]*>.*?</a>` "" $renderedFlat -}}
+
+{{- /*
+  Always use a <div> as the outer element, never <a> - <div> is a recognized CommonMark
+  "type 6" HTML block tag, so goldmark passes it through untouched. <a> isn't on that list, so
+  when this shortcode's output is the sole content of a (loose) markdown list item, goldmark
+  wraps it in a <p> - and a <div> is illegal inside <p>, which browsers "fix" by auto-closing/
+  reparenting mid-card, silently dropping the rest of the card's content. For clickable cards,
+  simulate the whole-card link with an absolutely-positioned "stretched link" overlay instead
+  (see .book-card-clickable / .book-card-link in _custom.scss) rather than wrapping in <a>.
+*/ -}}
+<div class="book-card{{ with $href }} book-card-clickable{{ end }}{{ with $.Get "class" }} {{ . }}{{ end }}">{{- with $.Get "image" -}}{{- $imgDestination := partial "docs/links/portable-image" (dict "Page" $.Page "Destination" .) -}}<img src="{{ $imgDestination | safeURL }}" />{{- end -}}<div class="markdown-inner">{{ $renderedFlat | safeHTML }}</div>{{- with $href -}}{{- $destination := partial "docs/links/portable-link" (dict "Page" $.Page "Destination" .) -}}<a class="book-card-link" href="{{ $destination | safeURL }}" aria-hidden="true" tabindex="-1"></a>{{- end -}}</div>
+{{- /* remove whitespace */ -}}
+{{- /* remove whitespace */ -}}
