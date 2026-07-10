@@ -408,6 +408,16 @@ footer {
     }
   }
 
+  // For a second/later heading inside the same ".page-section" (e.g. Community page's "Check out
+  // some other open-source Kafka projects", which follows the Community call section's text
+  // rather than opening a new section) - the bare "> h1" rule above zeroes out top margin since
+  // it assumes an h1 always opens a section, so this heading otherwise sits flush against the
+  // preceding paragraph. Opt in per-heading via raw HTML (`<h1 class="section-heading-spaced">`)
+  // rather than changing "> h1" globally, since most page-sections only have one heading.
+  > h1.section-heading-spaced {
+    margin-top: 2rem;
+  }
+
   &:nth-of-type(even) {
     background-color: $streamshub-green-5;
   }
@@ -698,6 +708,21 @@ footer {
     .book-search-result-title {
       display: block;
     }
+
+    // Preview excerpt of where the query text was actually found in the page body - see
+    // assets/search.js's buildSnippet/renderSnippet. Muted body color so the highlighted <mark>
+    // (the part that matters) stands out against it.
+    .book-search-result-snippet {
+      margin: $spacing-xs 0 0;
+      font-size: 0.8rem;
+      color: $streamshub-gray;
+
+      mark {
+        background: none;
+        color: $streamshub-green-2;
+        font-weight: bold;
+      }
+    }
   }
 
   a {
@@ -948,6 +973,15 @@ footer {
 
 .book-menu {
   font-size: 14px;
+}
+
+// Extra breathing room above each sidebar's top-level list - the left menu's file tree (which
+// otherwise sits close under the version picker, or flush at the top on pages without one) and
+// the right TOC's list (which otherwise starts flush at the top of its content box), so both
+// sidebars get the same amount of space before their content begins.
+.book-menu-content nav > ul,
+.book-toc-content nav > ul {
+  margin-top: $spacing-xl;
 }
 
 .book-header {

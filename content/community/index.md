@@ -35,23 +35,23 @@ The StreamsHub community is usually held every two weeks. Anyone is welcome to j
 - Meeting agenda and notes are stored in this [Google Doc](https://docs.google.com/document/d/1f1iK6SXwFh34D5xj2-gA_ghpu9_Ubg4KaDDIlZTy5Sk/edit?usp=sharing).
 - Please add any discussion items to the agenda at least 12 hours before the next meeting. If there are no agenda items or significant proposals/issues/PRs to discuss, the maintainers reserve the right to cancel the meeting. Cancellations will be announced on the `#all-streamshub` channel on the community Slack.
 
-# Check out some other open-source Kafka projects
+<h1 class="section-heading-spaced">Check out some other open-source Kafka projects</h1>
 Want to get involved in the StreamsHub community and help build the best open-source tooling stack for Apache Kafka? Check out the ways to get involved or find out more information.
 
 {{% columns %}}
-- {{< card image="/img/icons/strimzi.png" class="project-card card-gradient external-project-card" >}}
+- {{< card href="https://strimzi.io/" image="/img/icons/strimzi.png" class="project-card card-gradient external-project-card" >}}
   # Strimzi
   Run Apache Kafka on Kubernetes. Strimzi simplifies deploying and managing Kafka clusters on Kubernetes.
 
   [Learn more](https://strimzi.io/)
   {{< /card >}}
-- {{< card image="/img/icons/kroxy.png" class="project-card card-gradient external-project-card" >}}
+- {{< card href="https://kroxylicious.io/" image="/img/icons/kroxy.png" class="project-card card-gradient external-project-card" >}}
   # Kroxylicious
   Kroxylicious, the snappy open source proxy for Apache Kafka®Topic encryption, policy-enforcement, multi-tenancy, audit and much more.
 
   [Learn more](https://kroxylicious.io/)
   {{< /card >}}
-- {{< card image="/img/icons/apicurio.png" class="project-card card-gradient external-project-card" >}}
+- {{< card href="https://www.apicur.io/" image="/img/icons/apicurio.png" class="project-card card-gradient external-project-card" >}}
   # Apicurio
   Open source toolset focused on API design, management, and schema registries.
 

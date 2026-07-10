@@ -16,16 +16,16 @@
   - groups the results list itself by project, then by sub-group within a project (e.g. Console's
     "Documentation" vs "Quick Start"), using the "project"/"projectLabel"/"group" fields added to
     the search index by assets/search-data.json
+  - matches on literal substring rather than fuzzy edit-distance (see transformQuery/buildQuery
+    below) and shows a highlighted preview snippet of where the match was found in the page body
 */}}
 
 (function () {
   const searchDataURL = '{{ partial "docs/links/resource-precache" $searchData }}';
   const indexConfig = Object.assign({{ $searchConfig }}, {
     includeScore: true,
+    includeMatches: true,
     useExtendedSearch: true,
-    fieldNormWeight: 1.5,
-    threshold: 0.2,
-    ignoreLocation: true,
     keys: [
       {
         name: 'title',
@@ -129,6 +129,26 @@
     return known.concat(extra).map(key => ({ key, label: labels.get(key) }));
   }
 
+  /**
+   * Fuse's default matching is fuzzy (edit-distance) - on a long page-body field like "content"
+   * this readily produces false positives (e.g. "flink" fuzzy-matching a Console page that never
+   * mentions Flink at all, just because its scattered letters appear within a large enough blob
+   * of unrelated text). Prefixing every word with "'" switches Fuse's extended-search syntax to
+   * literal substring inclusion instead - each word must actually appear in the title/content as
+   * written (case-insensitive), and multiple words are required together (space = logical AND).
+   * This also gives cleaner, more predictable match indices to build the preview snippet from.
+   * @param {String} raw
+   * @returns {String}
+   */
+  function transformQuery(raw) {
+    return raw
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(word => "'" + word)
+      .join(' ');
+  }
+
   function onQueryChange() {
     if (!input.value || !window.bookSearchIndex) {
       activeProject = null;
@@ -137,7 +157,9 @@
       return;
     }
 
-    const hits = window.bookSearchIndex.search(input.value).slice(0, RESULT_LIMIT).map(hit => hit.item);
+    const hits = window.bookSearchIndex.search(transformQuery(input.value))
+      .slice(0, RESULT_LIMIT)
+      .map(hit => Object.assign({}, hit.item, { _matches: hit.matches }));
 
     const counts = {};
     hits.forEach(function (item) {
@@ -240,17 +262,96 @@
         group.items.forEach(function (item) {
           // Title and section both live inside the <a> (rather than <a> then a sibling
           // <small>) so the whole row is clickable, not just the title text.
-          const li = element('<li class="book-search-result"><a href><span class="book-search-result-title"></span><small></small></a></li>');
+          const li = element('<li class="book-search-result"><a href><span class="book-search-result-title"></span><small></small><p class="book-search-result-snippet"></p></a></li>');
           const a = li.querySelector('a'), titleEl = li.querySelector('.book-search-result-title'), small = li.querySelector('small');
+          const snippetEl = li.querySelector('.book-search-result-snippet');
 
           a.href = item.href;
           titleEl.textContent = item.title;
           small.textContent = item.section;
 
+          const contentMatch = findContentMatch(item);
+          if (contentMatch) {
+            renderSnippet(snippetEl, contentMatch.value, contentMatch.indices);
+          } else {
+            snippetEl.remove();
+          }
+
           results.appendChild(li);
         });
       });
     });
+  }
+
+  /**
+   * @param {Object} item a search-data entry with a "_matches" array attached (from Fuse's
+   *   includeMatches option)
+   * @returns {Object|null} the page's full plain-text content ("value") plus the first matched
+   *   character range within it ("indices"), or null if the match was only on the title (nothing
+   *   to preview from the body)
+   */
+  function findContentMatch(item) {
+    if (!item._matches) {
+      return null;
+    }
+
+    const match = item._matches.find(m => m.key === 'content');
+    if (!match || !match.indices || !match.indices.length) {
+      return null;
+    }
+
+    return { value: match.value, indices: match.indices[0] };
+  }
+
+  /**
+   * Builds a short "...before [match] after..." excerpt around a matched range, trimmed to word
+   * boundaries so it doesn't start/end mid-word.
+   * @param {String} text full field value the match was found in
+   * @param {[Number, Number]} indices inclusive [start, end] character range of the match
+   * @returns {Object} "prefix"/"match"/"suffix" string parts to render
+   */
+  function buildSnippet(text, indices) {
+    const CONTEXT = 50;
+    const start = indices[0];
+    const end = indices[1] + 1; // Fuse's end index is inclusive; make it exclusive for slicing
+
+    let from = Math.max(0, start - CONTEXT);
+    let to = Math.min(text.length, end + CONTEXT);
+
+    if (from > 0) {
+      const spaceIdx = text.indexOf(' ', from);
+      if (spaceIdx !== -1 && spaceIdx < start) {
+        from = spaceIdx + 1;
+      }
+    }
+    if (to < text.length) {
+      const spaceIdx = text.lastIndexOf(' ', to);
+      if (spaceIdx !== -1 && spaceIdx > end) {
+        to = spaceIdx;
+      }
+    }
+
+    return {
+      prefix: (from > 0 ? '… ' : '') + text.slice(from, start),
+      match: text.slice(start, end),
+      suffix: text.slice(end, to) + (to < text.length ? ' …' : '')
+    };
+  }
+
+  /**
+   * Renders a snippet (prefix text + highlighted <mark> match + suffix text) into an element,
+   * built from text nodes rather than innerHTML since the snippet contains raw page content.
+   * @param {Element} el
+   * @param {String} text
+   * @param {[Number, Number]} indices
+   */
+  function renderSnippet(el, text, indices) {
+    const snippet = buildSnippet(text, indices);
+    el.appendChild(document.createTextNode(snippet.prefix));
+    const mark = document.createElement('mark');
+    mark.textContent = snippet.match;
+    el.appendChild(mark);
+    el.appendChild(document.createTextNode(snippet.suffix));
   }
 
   /**

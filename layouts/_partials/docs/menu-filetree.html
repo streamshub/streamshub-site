@@ -1,15 +1,20 @@
 {{/*
   StreamsHub override of the hugo-book theme's docs/menu-filetree.html.
 
-  Three changes from the theme default (which walks Site.Params.BookSection, showing every
+  Four changes from the theme default (which walks Site.Params.BookSection, showing every
   top-level section incl. Announcements/Explore/Community):
   1. Hardcoded to just the three project sections, since docs now live nested under each
      project's own section (content/<project>/docs/) rather than a single shared content/docs/.
-  2. Version declutter: a project's docs children that look like a version (docBuilder tags
+  2. Only the project that the current page actually belongs to is rendered at all - the other
+     two projects' `_index.md` pages have no body content of their own (they're pure
+     landing/redirect pages), so the theme's link template renders them as a non-clickable
+     `<a>` with no `href`. Cross-project navigation already exists via the navbar's "Projects ▾"
+     dropdown, so there's no need to also list other projects here as dead links.
+  3. Version declutter: a project's docs children that look like a version (docBuilder tags
      every version folder's index page with title = the version string, e.g. "main", "0.8.3")
      are collapsed to just the currently-selected version (see docs/version-picker.html for the
      matching selection logic) instead of listing every version as a flat sibling.
-  3. Collapsed-by-default branches: a section's children only render when that section is the
+  4. Collapsed-by-default branches: a section's children only render when that section is the
      current page or an ancestor of it. Otherwise it's shown as a plain link with no expansion -
      e.g. browsing the Console's main documentation no longer also dumps out every Quick Start
      sub-page (Prerequisites, Installation, ...) in the tree; that only expands when you're
@@ -18,12 +23,12 @@
 <ul>
   {{ range slice "/console" "/flink-sql-runner" "/strimzi-mcp-server" }}
     {{ with $.Site.GetPage . }}
-      <li>
-        {{ template "book-page-link" (dict "Page" . "CurrentPage" $) }}
-        {{ if or (eq . $) (.IsAncestor $) }}
+      {{ if or (eq . $) (.IsAncestor $) }}
+        <li>
+          {{ template "book-page-link" (dict "Page" . "CurrentPage" $) }}
           {{ template "book-section-children" (dict "Section" . "CurrentPage" $) }}
-        {{ end }}
-      </li>
+        </li>
+      {{ end }}
     {{ end }}
   {{ end }}
 </ul>
