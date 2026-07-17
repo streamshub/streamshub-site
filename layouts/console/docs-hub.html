@@ -1,0 +1,10 @@
+{{/*
+  Scoped to pages with `layout = "docs-hub"` front matter (console/docs, console/quick-start) so
+  it doesn't leak to other section-kind pages under console (e.g. console/community). See
+  docs/docs-hub.html for what it actually renders.
+*/}}
+{{ define "main" }}
+<article class="markdown book-article">
+  {{ partial "docs/docs-hub.html" . }}
+</article>
+{{ end }}

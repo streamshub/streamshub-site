@@ -9,7 +9,6 @@
   (the development branch) is always the default/top entry; tagged versions sort numerically,
   newest first.
 */}}
-{{- $versionPattern := `^(main|[0-9]+(\.[0-9]+){1,2})$` -}}
 {{- $projectRoots := slice
   (dict "match" "/console/docs" "docs" "/console/docs")
   (dict "match" "/flink-sql-runner/docs" "docs" "/flink-sql-runner/docs")
@@ -24,28 +23,8 @@
   {{- end -}}
 {{- end -}}
 {{- with $docsRoot -}}
-  {{- $versionPages := slice -}}
-  {{- range .Pages -}}
-    {{- if findRE $versionPattern .Title -}}
-      {{- $versionPages = $versionPages | append . -}}
-    {{- end -}}
-  {{- end -}}
-  {{- if $versionPages -}}
-    {{- $ranked := slice -}}
-    {{- range $versionPages -}}
-      {{- $key := "" -}}
-      {{- if eq .Title "main" -}}
-        {{- $key = "9" -}}
-      {{- else -}}
-        {{- $padded := slice -}}
-        {{- range split .Title "." -}}
-          {{- $padded = $padded | append (printf "%05d" (int .)) -}}
-        {{- end -}}
-        {{- $key = printf "1.%s" (delimit $padded ".") -}}
-      {{- end -}}
-      {{- $ranked = $ranked | append (dict "Page" . "Key" $key) -}}
-    {{- end -}}
-    {{- $sorted := sort $ranked "Key" "desc" -}}
+  {{- $sorted := partial "docs/version-pages.html" . -}}
+  {{- if $sorted -}}
     {{- $current := $.Page -}}
     {{- $selected := index $sorted 0 -}}
     {{- range $sorted -}}
@@ -56,10 +35,10 @@
     <div class="book-version-picker">
       <div class="book-version-picker-label">Version</div>
       <details class="book-version-picker-select">
-        <summary>{{ $selected.Page.Title }} <span class="book-version-picker-arrow">&#9662;</span></summary>
+        <summary>{{ $selected.Version }} <span class="book-version-picker-arrow">&#9662;</span></summary>
         <ul>
           {{ range $sorted }}
-          <li><a href="{{ .Page.RelPermalink }}" class="{{ if eq .Page $selected.Page }}active{{ end }}">{{ .Page.Title }}</a></li>
+          <li><a href="{{ .Page.RelPermalink }}" class="{{ if eq .Page $selected.Page }}active{{ end }}">{{ .Version }}</a></li>
           {{ end }}
         </ul>
       </details>
