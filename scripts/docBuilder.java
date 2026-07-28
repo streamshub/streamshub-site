@@ -245,7 +245,10 @@ class DocBuilder implements Callable<Integer> {
     @Option(names = {"-td", "--templateDir"}, description = "Path to the template directory", defaultValue = defaultTemplatePath)
     private String templateDir;
 
-    @Parameters(index="0", description = "GitHub Access Token")
+    @Option(names = {"--tags-only"}, description = "Only download tagged versions, skip development branch and contents page generation")
+    private boolean tagsOnly;
+
+    @Parameters(index="0", description = "GitHub Access Token. If not provided, falls back to the GITHUB_TOKEN environment variable.", arity = "0..1")
     private String accessToken;
 
     private Path docsRootPath;
@@ -422,6 +425,14 @@ class DocBuilder implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        if (accessToken == null || accessToken.isEmpty()) {
+            accessToken = System.getenv("GITHUB_TOKEN");
+        }
+        if (accessToken == null || accessToken.isEmpty()) {
+            LOGGER.error("No GitHub access token provided. Pass as argument or set GITHUB_TOKEN environment variable.");
+            return 1;
+        }
+
         LOGGER.info("Loading: " + sourcePath);
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(sourcePath));
@@ -442,14 +453,16 @@ class DocBuilder implements Callable<Integer> {
         for (Source source : sources) {
             LOGGER.info("Found source: " + source);
 
-            sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
-                try {
-                    //Download the dev branch
-                    processSource(ghFolderDownloader, source, source.developmentBranch(), false);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }));
+            if (!tagsOnly) {
+                sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
+                    try {
+                        //Download the dev branch
+                        processSource(ghFolderDownloader, source, source.developmentBranch(), false);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+            }
 
             //Download each of the tags
             for (String tag : source.tags()) {
@@ -464,14 +477,16 @@ class DocBuilder implements Callable<Integer> {
 
             // Wait for the development branch and tags of this source to finish processing, then generate a contents page
             CompletableFuture<Void> branchAndTagFutures = CompletableFuture.allOf(sourceFutures.get(source).toArray(new CompletableFuture[0]));
-            sourceFutures.get(source).add(branchAndTagFutures.thenRun(() -> {
-                try {
-                    // Create the contents page for this source
-                    createSourceContentsPage(source);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }));
+            if (!tagsOnly) {
+                sourceFutures.get(source).add(branchAndTagFutures.thenRun(() -> {
+                    try {
+                        // Create the contents page for this source
+                        createSourceContentsPage(source);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+            }
         }
 
         // Wait for everything to finish processing and generating
