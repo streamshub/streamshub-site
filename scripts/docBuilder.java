@@ -248,6 +248,9 @@ class DocBuilder implements Callable<Integer> {
     @Option(names = {"--tags-only"}, description = "Only download tagged versions, skip development branch and contents page generation")
     private boolean tagsOnly;
 
+    @Option(names = {"--cleanup"}, description = "Remove cached doc folders for tags no longer listed in the config")
+    private boolean cleanup;
+
     @Parameters(index="0", description = "GitHub Access Token. If not provided, falls back to the GITHUB_TOKEN environment variable.", arity = "0..1")
     private String accessToken;
 
@@ -423,6 +426,25 @@ class DocBuilder implements Callable<Integer> {
         Files.writeString(contentsFile, renderedTemplate);
     }
 
+    private void cleanupRemovedTags(Source source) throws IOException {
+        Path sourceDir = docsRootPath.resolve(source.outputPathOrName());
+        if (!Files.exists(sourceDir)) return;
+
+        var expectedNames = new java.util.HashSet<String>();
+        expectedNames.add(source.developmentBranch());
+        expectedNames.addAll(source.tags());
+
+        try (var stream = Files.newDirectoryStream(sourceDir, Files::isDirectory)) {
+            for (Path dir : stream) {
+                String name = dir.getFileName().toString();
+                if (!expectedNames.contains(name)) {
+                    LOGGER.info("Removing docs for removed tag: " + source.name() + " " + name);
+                    org.apache.commons.io.FileUtils.deleteDirectory(dir.toFile());
+                }
+            }
+        }
+    }
+
     @Override
     public Integer call() throws Exception {
         if (accessToken == null || accessToken.isEmpty()) {
@@ -491,6 +513,12 @@ class DocBuilder implements Callable<Integer> {
 
         // Wait for everything to finish processing and generating
         CompletableFuture.allOf(sourceFutures.values().stream().flatMap(List::stream).toArray(CompletableFuture[]::new)).join();
+
+        if (cleanup) {
+            for (Source source : sources) {
+                cleanupRemovedTags(source);
+            }
+        }
 
         return 0;
     }

@@ -38,7 +38,7 @@ jobs:
       - name: Download tagged docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: jbang scripts/docBuilder.java --tags-only
+        run: jbang scripts/docBuilder.java --tags-only --cleanup
 
       - name: Commit and push cached docs
         run: |
