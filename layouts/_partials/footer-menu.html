@@ -1,0 +1,39 @@
+<footer class="book-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="book-brand flex align-center">
+        <img src="/img/icons/streamshub_icon_default_64px.png" alt="">
+        <h1>StreamsHub</h1>
+      </div>
+      <p>
+        Open source resources for building real-time event driven services and data-pipelines on Kubernetes.
+      </p>
+      <p>
+        Get involved in StreamsHub! Join the discussions on <a href="https://streamshub-io.slack.com">Slack</a>, or get involved on
+        <a href="https://github.com/streamshub">GitHub</a>.
+      </p>
+    </div>
+
+    <div class="footer-menu">
+        {{ range site.Menus.footer }}
+          {{ if .HasChildren }}
+            <div class="footer-column">
+
+              <!-- Parent title -->
+              <h4>{{ .Name }}</h4>
+
+              <!-- Children list -->
+              <ul>
+                {{ range .Children }}
+                  <li>
+                    <a href="{{ .URL }}">{{ .Name }}</a>
+                  </li>
+                {{ end }}
+              </ul>
+
+            </div>
+          {{ end }}
+        {{ end }}
+    </div>
+  </div>
+</footer>

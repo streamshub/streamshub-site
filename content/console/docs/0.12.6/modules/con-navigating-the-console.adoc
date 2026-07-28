@@ -1,0 +1,38 @@
+:_mod-docs-content-type: CONCEPT
+
+[id='con-navigating-the-console-{context}']
+= Navigating the StreamsHub Console
+
+[role="_abstract"]
+The console homepage lists all connected Kafka clusters.
+Select a cluster to access the following pages:
+
+Cluster overview:: Summarizes cluster status, key metrics, and resource usage.
+Nodes:: Details broker and controller nodes, including roles, status, and partition distribution.
+Topics:: Lists topics with configuration details, partition data, and associated groups.
+Kafka Connect:: Displays information about Kafka Connect clusters, including connector status, configuration details, and available plugins.
+Kafka Users:: Lists Kafka users associated with the selected cluster and shows the namespace for each user.
+Groups:: Lists groups associated with the cluster and shows group activity, membership, and assignments. 
+Offset and lag metrics are available for consumer groups.
+
+NOTE: If the cluster navigation menu is hidden, click the navigation menu icon (three horizontal lines) in the console header to reveal it.
+
+== Navigate between clusters
+
+After you log in to a cluster, a cluster selector appears at the top of each console page.
+The selector shows the current cluster and the number of available clusters.
+
+Click the selector to:
+
+* Switch to another cluster
+* Return to the console homepage to view all clusters
+
+Kroxylicious virtual Kafka clusters appear with a *Virtual* label in the console.
+A virtual Kafka cluster is a logical Kafka cluster that is accessible to clients over the network.
+The Kroxylicious proxy exposes the virtual cluster and forwards client requests to an underlying Kafka cluster using configured filters.
+
+== Choose how the console looks
+
+The StreamsHub Console supports three theme options: *Light*, *Dark*, and *System*. When set to *System*, the console matches your operating system theme preference.
+
+To change the theme, click the theme icon (sun or moon) in the console header to open the theme selector.

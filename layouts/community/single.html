@@ -1,0 +1,16 @@
+{{ define "main-container" }}
+<div class="landing-container">
+    <article class="markdown book-article">
+    {{ template "hero-template" . }}
+        {{- .Content -}}
+    </article>
+</div>
+{{ end }}
+
+{{ define "hero-template" }}
+    {{ partial "book-hero.html" (dict
+          "Params" .Params
+          "Image" (dict "url" "/img/icons/streamshub_icon_default_512px.png" "class" "book-hero-icon")
+        )
+    }}
+{{ end }}

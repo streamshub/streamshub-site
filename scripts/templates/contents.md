@@ -1,12 +1,7 @@
 +++
 title = '{{ sourceName }} Documentation'
-linkTitle = "{{ sourceName }}"
+linkTitle = "{{ linkTitle }}"
+layout = "docs-hub"
 +++
-## In development documentation
 
-[{{ developmentBranchName }}]({{ developmentBranchIndexFile }})
-
-## Released versions documentation
-{% for tag in tags %}
-[{{ tag.name }}]({{ tag.indexFile }})
-{% endfor %}
+Redirects to the latest available documentation version.

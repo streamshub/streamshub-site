@@ -1,0 +1,14 @@
+{{ define "main-container" }}
+<div class="landing-container">
+  <article class="markdown book-article">
+    <section class="page-section">
+      <div class="explore-breadcrumb">
+        <a href="/announcements/">Announcements</a> &gt; {{ .Title }}
+      </div>
+      <div class="announcement-date">{{ .Date.Format "January 2, 2006" }}</div>
+      <h1>{{ .Title }}</h1>
+      {{ .Content }}
+    </section>
+  </article>
+</div>
+{{ end }}

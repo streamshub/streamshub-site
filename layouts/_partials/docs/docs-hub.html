@@ -1,0 +1,33 @@
+{{/*
+  Content for a docBuilder-managed docs root (e.g. /console/docs/, /console/quick-start/,
+  /flink-sql-runner/docs/). JS-redirects straight into whichever version ranks highest among the
+  versions that actually exist as pages - normally "main", but falling back to the newest tag
+  when main hasn't been pulled (e.g. a local build without a GitHub token), so this never
+  dead-links to a version that isn't there. Non-JS readers, or a build with no versions pulled
+  at all, get a plain fallback instead.
+*/}}
+{{- $sorted := partial "docs/version-pages.html" . -}}
+{{- with $sorted -}}
+  {{- $target := index . 0 -}}
+  <div id="__redirect-target" style="display:none">
+    <a href="{{ $target.Page.RelPermalink }}">{{ $target.Version }}</a>
+  </div>
+  <script>
+  (function () {
+    var a = document.querySelector('#__redirect-target a');
+    if (a) { window.location.replace(a.href); }
+  })();
+  </script>
+  <noscript>
+    <ul>
+      {{ range . }}
+      <li><a href="{{ .Page.RelPermalink }}">{{ .Version }}</a></li>
+      {{ end }}
+    </ul>
+  </noscript>
+{{- else -}}
+  <p>
+    No documentation has been downloaded for this build. Run
+    <code>jbang scripts/docBuilder.java &lt;github-token&gt;</code> to fetch it locally.
+  </p>
+{{- end -}}

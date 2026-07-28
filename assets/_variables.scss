@@ -3,6 +3,12 @@ $streamshub-green-0: #02151b;
 $streamshub-green-1: #013440;
 $streamshub-green-2: #05a6a6;
 $streamshub-green-3: #91f2f2;
+$streamshub-green-4: #032936;
+$streamshub-green-5: #002129;
+$streamshub-green-6: #008593;
+$streamshub-green-7: #00303C;
+
+$streamshub-gray: #a6a6a6;
 
 $font-size-base: 14px;
 $menu-width: 18rem;
@@ -29,3 +35,32 @@ $hint-colors: (
 
   --icon-filter: brightness(0) invert(1);
 }
+
+
+$navbar-height: 64px;
+$page-content-x-padding: 10%;
+
+// Responsive breakpoints
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
+// Spacing scale
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 2.5rem;
+$spacing-3xl: 4rem;
+
+// Border radius scale
+$radius-sm: 3px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+
+// Responsive page padding
+$page-content-x-padding-mobile: 1.5rem;
+$page-content-x-padding-tablet: 5%;
+$page-content-x-padding-desktop: 10%;

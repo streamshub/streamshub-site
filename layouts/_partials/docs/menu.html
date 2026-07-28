@@ -1,0 +1,18 @@
+{{/*
+  StreamsHub override of the hugo-book theme's docs/menu.html.
+
+  The theme's version renders: brand, search, menu-before, menu-filetree, menu-after. We drop
+  "brand" (the top navbar already shows the StreamsHub logo) and "search" (not wanted in the
+  sidebar), and add the per-project version picker above the section tree.
+*/}}
+<nav>
+{{ partial "docs/version-picker" . }}
+
+{{ partial "docs/menu-filetree" . }}
+</nav>
+
+<!-- Restore menu position as soon as possible to avoid flickering -->
+{{ $script := resources.Get "menu-reset.js" | resources.Minify }}
+{{ with $script.Content }}
+  <script>{{ . | safeJS }}</script>
+{{ end }}

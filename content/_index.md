@@ -1,55 +1,67 @@
 +++
 linkTitle = "Home"
 layout = "landing"
+
+title = "Open source resources for building real-time event-driven services and data-pipelines on Kubernetes."
+description = "StreamsHub provides a curated set of open source projects, templates, and tools to support event-driven architectures, data pipelines, real-time data queries and more."
 +++
 
-<div class="book-hero">
+<section class="page-section">
+<h1>What is streamshub?</h1>
+<p>StreamsHub provides a set of open source projects which support event-driven architectures running on Kubernetes.</p>
+<img src="img/streamshub-architecture-v2-dark-03.png" alt="" class="streamshub-architecture">
+</section>
 
-<div class="landing-logo">
-    <img src="/favicon.svg" alt="Logo">
-    <h1>StreamsHub</h1>
-</div>
+<section class="page-section">
+<h1>Open source stack for Kafka</h1>
+<p>StreamsHub projects give open source options for working with Event-Driven architectures with Apache Kafka. 
+StreamsHub combines with other open-source projects like <a href="https://strimzi.io/">Strimzi</a> and <a href="https://kroxylicious.io/">Kroxylicious</a> to provide tools for running Kafka proxies and the UI console in Kubernetes.</p>
+<h2>Integrate with Apicurio registry for schema management</h2>
+<p>The Apicurio registry enforces message syntax and format via schemas and integrates with both the Console and Kroxylicious proxy. Filters can be applied to messages using Kroxylicious to add security, resilience and reliability to your event-driven applications.</p>
+</section>
 
-Open source resources for building real-time event-driven services and data-pipelines on Kubernetes.
-
-{{< badge style="default" title="License" value="Apache-2.0" >}}
-
-<br/>
-<br/>
-
-{{<button href="/docs/Flink-SQL-Tutorials/main/">}}Explore{{</button>}}
-
-</div>
-
-There is a rich ecosystem of open source projects providing event-driven and real time data infrastructure.
-The Apache Foundation alone has a wide selection of projects in this space including; Kafka, Flink, Spark, Pulsar, Beam, Paimon, Pinot to name a few.
-The Linux and Cloud Native Computing Foundations also have their own open source offerings.
-Navigating this ecosystem is often difficult and knowing how to deploy, run and combine these projects can be daunting.
-
-StreamsHub aims to provide a curated set of open source projects, templates and tools to help infrastructure engineers create services that support event-driven architectures (EDA), running on Kubernetes, and for data-scientists and analysts to create data-pipelines and query real-time data.
-Where there is a gap in the current open source offering, that would benefit from being filled, StreamsHub will aim to host a project to fill it (for example the Flink SQL runner allowing Standalone SQL query deployments), with the aim of pushing the solution up to the main projects.
-
-<br/>
-
+<section class="page-section">
+<h1>StreamsHub Projects</h1>
 {{% columns %}}
-- {{< card title="Card" image="" >}}
-  # [StreamsHub Console](/docs/StreamsHub-Console/)
+
+- {{< card title="Card" image="" class="project-card" >}}
+  # [StreamsHub Console](/console/)
   UI for administrating [Apache Kafka](https://kafka.apache.org/) clusters.
 
   Delivers real-time insights for monitoring, managing, and optimizing each cluster.
   {{< /card >}}
 
-- {{< card title="Card" image="" >}}
-  # [Flink SQL Runner](/docs/Flink-SQL-Runner/)
+- {{< card title="Card" image="" class="project-card" >}}
+  # [Flink SQL Runner](/flink-sql-runner/)
   Wrapper application and container image for use with [Flink Kubernetes Operator's](https://nightlies.apache.org/flink/flink-kubernetes-operator-docs-main/) `FlinkDeployment` custom resource.
 
   Allows you to specify your SQL queries as arguments.
   {{< /card >}}
 
-- {{< card title="Card" image="" >}}
-  # [Flink SQL Tutorials](/docs/Flink-SQL-Tutorials/main/)
-  Collection of tutorials covering many aspects of using Flink SQL.
-
-  Based on the StreamsHub [Flink SQL Examples](https://github.com/streamshub/flink-sql-examples) repository.
+- {{< card title="Card" image="" class="project-card" >}}
+  # [Strimzi MCP Server](/strimzi-mcp-server/)
+  MCP server for Strimzi to make deploying, managing and developing with Strimzi quicker and easier.
   {{< /card >}}
 {{% /columns %}}
+</section>
+
+<section class="page-section">
+<h1>Explore StreamsHub</h1>
+<p>Take a look at some guides, tutorials and walk-throughs showing what is possible using StreamsHub. <a href="/explore/">View all</a></p>
+{{% columns %}}
+- {{< card href="/explore/secure-authentication/" image="img/icons/pf-icon-private.png" class="project-card card-gradient card-with-icon" >}}
+  # Secure authentication with StreamsHub
+  Learn how to set up secure authentication for you applications and users with StreamsHub
+  {{< /card >}}
+
+- {{< card href="/explore/strimzi-mcp/" image="img/icons/fa-microchip.png" class="project-card card-gradient card-with-icon" >}}
+  # Using the Strimzi MCP
+  Learn how to make the most of Strimzi in your app development with the Strimzi MCP server.
+  {{< /card >}}
+
+- {{< card href="/explore/prometheus-metrics/" image="img/icons/pf-icon-monitoring.png" class="project-card card-gradient card-with-icon" >}}
+  # Displaying metrics using Prometheus
+  Learn how to collect and expose metrics using Prometheus and StreamsHub.
+  {{< /card >}}
+{{% /columns %}}
+</section>

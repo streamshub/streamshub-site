@@ -1,0 +1,47 @@
+{{/*
+  Per-project version picker, shown above the section tree on any docs page belonging to one of
+  the three projects. Renders nothing outside those pages (e.g. not on a project's marketing home
+  page, its community page, or its Quick Start - Quick Start isn't itself versioned and doesn't
+  link into a specific doc version, so the picker doesn't apply there).
+
+  Version pages are identified the same way as docs/menu-filetree.html: docBuilder tags every
+  version folder's index page with title = the version string (e.g. "main", "0.8.3"). "main"
+  (the development branch) is always the default/top entry; tagged versions sort numerically,
+  newest first.
+*/}}
+{{- $projectRoots := slice
+  (dict "match" "/console/docs" "docs" "/console/docs")
+  (dict "match" "/flink-sql-runner/docs" "docs" "/flink-sql-runner/docs")
+  (dict "match" "/strimzi-mcp-server/docs" "docs" "/strimzi-mcp-server/docs")
+-}}
+{{- $docsRoot := "" -}}
+{{- range $projectRoots -}}
+  {{- $docsPath := .docs -}}
+  {{- $matchPage := $.Site.GetPage .match -}}
+  {{- if and $matchPage (or (eq $matchPage $.Page) ($matchPage.IsAncestor $.Page)) -}}
+    {{- $docsRoot = $.Site.GetPage $docsPath -}}
+  {{- end -}}
+{{- end -}}
+{{- with $docsRoot -}}
+  {{- $sorted := partial "docs/version-pages.html" . -}}
+  {{- if $sorted -}}
+    {{- $current := $.Page -}}
+    {{- $selected := index $sorted 0 -}}
+    {{- range $sorted -}}
+      {{- if or (eq .Page $current) (.Page.IsAncestor $current) -}}
+        {{- $selected = . -}}
+      {{- end -}}
+    {{- end -}}
+    <div class="book-version-picker">
+      <div class="book-version-picker-label">Version</div>
+      <details class="book-version-picker-select">
+        <summary>{{ $selected.Version }} <span class="book-version-picker-arrow">&#9662;</span></summary>
+        <ul>
+          {{ range $sorted }}
+          <li><a href="{{ .Page.RelPermalink }}" class="{{ if eq .Page $selected.Page }}active{{ end }}">{{ .Version }}</a></li>
+          {{ end }}
+        </ul>
+      </details>
+    </div>
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,33 @@
+{{ define "header" }}
+<!-- -->
+{{ end }}
+
+{{ define "menu-container" }}
+<!-- -->
+{{ end }}
+
+{{ define "main-container" }}
+<div class="landing-container">
+    <article class="markdown book-article">
+    {{ template "hero-template" . }}
+        {{- .Content -}}
+    </article>
+</div>
+{{ end }}
+
+{{ define "toc-container" }}
+<!-- -->
+{{ end }}
+
+
+{{ define "hero-template" }}
+    {{ partial "book-hero.html" (dict
+          "Params" .Params
+          "Image" (dict "url" "img/icons/streamshub_icon_default_512px.png" "class" "book-hero-icon")
+          "Buttons" (slice
+            (dict "label" "Explore" "url" "/explore/" "class" "btn-full btn-large")
+            (dict "label" "Documentation" "url" "/docs/" "class" "btn-large")
+          )
+        )
+    }}
+{{ end }}

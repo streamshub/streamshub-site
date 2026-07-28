@@ -1,0 +1,14 @@
+{{ define "main-container" }}
+<div class="landing-container">
+  <article class="markdown book-article">
+    <section class="page-section explore-article">
+      <div class="explore-breadcrumb">
+        <a href="/explore/">Explore</a> &gt; {{ .Title }}
+      </div>
+      {{ with .Params.category }}<div class="explore-kicker explore-kicker--{{ . | urlize }}">{{ . | upper }}</div>{{ end }}
+      <h1>{{ .Title }}</h1>
+      {{ .Content }}
+    </section>
+  </article>
+</div>
+{{ end }}

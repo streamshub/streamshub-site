@@ -1,74 +1,1521 @@
-pre {
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
+// ===================================
+// 1. RESPONSIVE MIXINS
+// ===================================
+
+@mixin mobile {
+  @media (max-width: $breakpoint-tablet - 1) {
+    @content;
+  }
 }
 
-.container {
-    max-width: 83rem;
+@mixin tablet {
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
+    @content;
+  }
 }
 
-.markdown h3 {
+@mixin desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+// ===================================
+// 2. BASE & LAYOUT
+// ===================================
+
+html {
+  scrollbar-gutter: unset;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: $navbar-height;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex: 0 0 auto;
+}
+
+// ===================================
+// 3. COMPONENTS
+// ===================================
+
+// 3.1 Navbar & Mobile Menu
+.navbar {
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-xl;
+  background: $streamshub-green-1;
+  border-bottom: 1px solid $streamshub-green-2;
+  height: $navbar-height;
+
+  @include tablet {
+    padding: $spacing-sm $spacing-lg;
+  }
+
+  @include mobile {
+    padding: $spacing-sm $spacing-md;
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    // Hide search on mobile/tablet, show burger instead
+    .search-trigger {
+      @media (max-width: $breakpoint-desktop - 1) {
+        display: none;
+      }
+    }
+  }
+
+  // Burger menu button - only visible on mobile/tablet
+  &-burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $spacing-sm;
+    z-index: 10001;
+
+    @media (max-width: $breakpoint-desktop - 1) {
+      display: flex;
+    }
+
+    span {
+      width: 24px;
+      height: 2px;
+      background: $streamshub-green-2;
+      transition: all 0.3s ease;
+      display: block;
+    }
+
+    &.active {
+      span:nth-child(1) {
+        transform: rotate(45deg) translate(7px, 7px);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+    }
+  }
+
+  // Regular desktop menu
+  &-menu {
+    > ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+    }
+
+    a {
+      color: $streamshub-green-2;
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: $spacing-sm $spacing-sm;
+      border-radius: $radius-md;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+    }
+
+    // Hide regular menu on mobile/tablet
+    @media (max-width: $breakpoint-desktop - 1) {
+      display: none;
+    }
+  }
+
+  .dropdown {
+    position: relative;
+
+    &:hover .dropdown-menu {
+      display: block;
+    }
+
+    &-toggle {
+      cursor: pointer;
+    }
+
+    &-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: $streamshub-green-5;
+      border-radius: $radius-lg;
+      padding: 0.25rem 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      list-style: none;
+      flex-direction: column;
+      gap: 0;
+
+      li {
+        padding: 0;
+      }
+
+      a {
+        display: block;
+        padding: 8px 16px;
+        white-space: nowrap;
+        color: $body-font-color;
+        text-decoration: none;
+
+        &:hover {
+          background: $streamshub-green-6;
+          color: $streamshub-green-7;
+        }
+      }
+    }
+  }
+}
+
+// Mobile overlay menu
+.mobile-menu {
+  &-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &.active {
+      display: block;
+      opacity: 1;
+    }
+  }
+
+  &-close {
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    background: none;
+    border: none;
+    color: $streamshub-green-2;
+    font-size: 2.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: $spacing-xs;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10002;
+
+    span {
+      display: block;
+      line-height: 1;
+    }
+
+    &:hover {
+      color: white;
+      transform: rotate(90deg);
+    }
+  }
+
+  &-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $streamshub-green-1;
+    z-index: 10000;
+    padding: calc($navbar-height + 2rem) $spacing-xl $spacing-xl;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+
+    &.active {
+      transform: translateY(0);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+
+    li {
+      border-bottom: 1px solid $streamshub-green-2;
+      padding-bottom: $spacing-md;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      // Remove border for search item
+      &.mobile-menu-search {
+        border-bottom: 1px solid $streamshub-green-2;
+        margin-top: $spacing-lg;
+        padding-top: $spacing-lg;
+      }
+    }
+
+    a {
+      color: $streamshub-green-2;
+      text-decoration: none;
+      font-size: 1.25rem;
+      display: block;
+      padding: $spacing-md;
+      border-radius: $radius-md;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $streamshub-green-4;
+        color: white;
+      }
+    }
+
+    // Dropdown menus in mobile overlay
+    .dropdown {
+      &-toggle {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &::after {
+          content: "▼";
+          font-size: 0.8rem;
+          transition: transform 0.2s;
+        }
+
+        &.active::after {
+          transform: rotate(180deg);
+        }
+      }
+
+      &-menu {
+        display: none;
+        position: static;
+        background: none;
+        box-shadow: none;
+        padding-left: $spacing-lg;
+        margin-top: $spacing-md;
+        border-radius: 0;
+
+        &.active {
+          display: flex;
+        }
+
+        li {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+
+        a {
+          font-size: 1rem;
+          padding: $spacing-sm $spacing-md;
+        }
+      }
+    }
+  }
+
+  // Search trigger in mobile menu
+  &-search {
+    .search-trigger-mobile {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      color: $streamshub-green-2;
+      font-size: 1.25rem;
+      padding: $spacing-md;
+      cursor: pointer;
+      border-radius: $radius-md;
+      transition: all 0.2s ease;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        background: $streamshub-green-4;
+        color: white;
+      }
+    }
+  }
+}
+
+// 3.2 Page Sections
+.page-section {
+  padding: 2.5rem $page-content-x-padding-desktop;
+  background-color: $streamshub-green-0;
+  position: relative;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  // left-aligns children horizontally, per design
+  text-align: left;         // left-aligns text content, per design
+
+  @include tablet {
+    padding: 2.5rem $page-content-x-padding-tablet;
+  }
+
+  @include mobile {
+    padding: 2rem $page-content-x-padding-mobile;
+  }
+
+  > h1 {
+    font-size: 2.5rem;
+    margin: 0 0 1.5rem 0;
+
+    @include mobile {
+      font-size: 2rem;
+    }
+  }
+
+  // For a second/later heading inside the same ".page-section" (e.g. Community page's "Check out
+  // some other open-source Kafka projects", which follows the Community call section's text
+  // rather than opening a new section) - the bare "> h1" rule above zeroes out top margin since
+  // it assumes an h1 always opens a section, so this heading otherwise sits flush against the
+  // preceding paragraph. Opt in per-heading via raw HTML (`<h1 class="section-heading-spaced">`)
+  // rather than changing "> h1" globally, since most page-sections only have one heading.
+  > h1.section-heading-spaced {
+    margin-top: 2rem;
+  }
+
+  &:nth-of-type(even) {
+    background-color: $streamshub-green-5;
+  }
+}
+
+.navbar {
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: $streamshub-green-1;
+  border-bottom: 1px solid $streamshub-green-2;
+  height: $navbar-height;
+}
+
+.navbar-menu > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: $streamshub-green-5;
+  border-radius: 8px;
+  padding: 0.25rem 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  list-style: none;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dropdown-menu li {
+  padding: 0;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 8px 16px;
+  white-space: nowrap;
+  color: $body-font-color;
+  text-decoration: none;
+
+  &:hover {
+    background: $streamshub-green-6;
+    color: $streamshub-green-7;
+  }
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+// 3.7 Search
+.search-trigger {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 7rem $spacing-sm $spacing-md;
+  background: var(--body-background);
+  border: 0px solid #ddd;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+
+  @include mobile {
+    padding: $spacing-sm $spacing-md;
+  }
+
+  &:hover {
+    backdrop-filter: brightness(0.5);
+  }
+}
+
+.search-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+
+  &.hidden {
+    display: none;
+  }
+
+  &-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(100px);
+  }
+
+  &-content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    background: $streamshub-green-1;
+    border-radius: $radius-xl;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-height: 70vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.2s ease-out;
+    border-bottom: none;
+
+    @include mobile {
+      width: 95%;
+      max-width: none;
+      margin: 0 $spacing-md;
+    }
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #333;
+  }
+}
+
+#book-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: $spacing-sm;
+  background: none;
+
+  &::placeholder {
+    color: $body-font-color !important;
+  }
+}
+
+// Row of per-project buttons above the results list - see assets/search.js. Hidden entirely
+// (rather than shown all-disabled) when there's no query or zero total matches, since a fully
+// grayed-out row with nothing to filter isn't useful.
+#book-search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding: 0 $spacing-lg $spacing-md;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.book-search-filter {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-lg;
+  border: 1px solid $streamshub-green-2;
+  background: transparent;
+  color: $streamshub-green-2;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.active {
+    background: $streamshub-green-2;
+    color: $streamshub-green-0;
+  }
+
+  &:disabled {
+    border-color: $streamshub-gray;
+    color: $streamshub-gray;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled):not(.active) {
+    background: rgba($streamshub-green-2, 0.15);
+  }
+}
+
+#book-search-results {
+  overflow-y: auto;
+  max-height: calc(70vh - 100px);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  backdrop-filter: grayscale(90%);
+
+  // Project name, e.g. "Console" - not clickable, just a section label.
+  .book-search-heading {
+    padding: $spacing-md $spacing-lg $spacing-xs;
+    background: $streamshub-green-0;
+    font-size: 0.75rem;
     font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $streamshub-green-2;
+    cursor: default;
+  }
+
+  // Sub-section within a project, e.g. "Documentation" / "Quick Start" - also just a label.
+  .book-search-subheading {
+    padding: $spacing-xs $spacing-lg $spacing-xs ($spacing-lg + $spacing-md);
+    background: $streamshub-green-0;
+    font-size: 0.75rem;
+    color: $streamshub-gray;
+    cursor: default;
+  }
+
+  .book-search-empty {
+    padding: $spacing-lg;
+    color: $streamshub-gray;
+    text-align: center;
+    cursor: default;
+  }
+
+  // The actual clickable matches. Padding lives on the <a> (not this <li>) so the whole row -
+  // not just the title text - is part of the click target, per design.
+  .book-search-result {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $streamshub-green-1;
+    }
+
+    a {
+      padding: $spacing-sm $spacing-lg $spacing-sm ($spacing-lg + $spacing-md);
+    }
+
+    // Title and section live inside the same <a> now (so the whole row is clickable - see
+    // assets/search.js) - both default to inline, so force the title onto its own line same
+    // as before.
+    .book-search-result-title {
+      display: block;
+    }
+
+    // Preview excerpt of where the query text was actually found in the page body - see
+    // assets/search.js's buildSnippet/renderSnippet. Muted body color so the highlighted <mark>
+    // (the part that matters) stands out against it.
+    .book-search-result-snippet {
+      margin: $spacing-xs 0 0;
+      font-size: 0.8rem;
+      color: $streamshub-gray;
+
+      mark {
+        background: none;
+        color: $streamshub-green-2;
+        font-weight: bold;
+      }
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
 }
 
-.markdown pre code {
+.book-search-spinner {
+  padding: $spacing-xl;
+  text-align: center;
+}
+
+// 3.5 Hero
+.book-hero {
+  background: $streamshub-green-4;
+  position: relative;
+  padding: 5% $page-content-x-padding-desktop;
+  overflow: hidden;
+
+  @include tablet {
+    padding: 5% $page-content-x-padding-tablet;
+  }
+
+  @include mobile {
+    padding: 5% $page-content-x-padding-mobile;
+  }
+
+  &-content {
+    position: relative;
+    z-index: 3;
+  }
+
+  // Hero buttons styling
+  .hero-buttons {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-xl;
+    flex-wrap: wrap;
+
+    @include mobile {
+      flex-direction: column;
+      gap: $spacing-sm;
+      align-items: stretch;
+    }
+
+    a {
+      // Theme's global "a { flex: auto; }" (_main.scss) makes any anchor inside a flex
+      // container grow to fill available space - without this override these buttons
+      // stretch to fill the hero width instead of hugging their text like the design.
+      flex: none;
+      text-decoration: none;
+      display: inline-block;
+
+      @include mobile {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+
+  &-icon {
+    position: absolute;
+    right: $page-content-x-padding-desktop;
+    top: 0;
+    transform: translateY(-15%) scale(1.5);
+    opacity: 0.35;
+
+    @include mobile {
+      display: none; // hide decorative icon on mobile
+    }
+  }
+
+  // side-by-side variant
+  &--side {
+    .book-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: $spacing-xl;
+
+      @include mobile {
+        grid-template-columns: 1fr;
+        gap: $spacing-lg;
+      }
+    }
+
+    .book-hero-content {
+      position: static;  // override relative/z-index from default
+    }
+
+    .book-hero-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        max-height: 300px;
+        width: auto;
+        opacity: 1;        // no fading like the background version
+
+        @include mobile {
+          max-height: 200px;
+          width: 100%;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+}
+
+.navbar-menu ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-menu a {
+  color: $streamshub-green-2;
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.navbar-menu a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+// 3.8 Buttons & Project Cards
+.btn-full {
+  background: $streamshub-green-2 !important;
+  color: $body-font-color !important;
+  text-decoration: none !important;
+
+  @include mobile {
+    padding: $spacing-sm $spacing-lg !important;
+  }
+}
+
+.btn-large {
+  background: $streamshub-green-4;
+  border: solid 1px $streamshub-green-2;
+  border-radius: $radius-md !important;
+  color: $body-font-color !important;
+  padding: $spacing-xs $spacing-lg !important;
+  text-decoration: none !important;
+
+  @include mobile {
+    padding: $spacing-sm $spacing-lg !important;
+  }
+}
+
+// See layouts/shortcodes/card.html - clickable cards stay <div>s (never <a>s, which goldmark
+// won't recognize as an HTML block, breaking list/paragraph parsing) and simulate the
+// whole-card link via an absolutely-positioned "stretched link" overlay (.book-card-link).
+.book-card {
+  position: relative;
+}
+
+.book-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+// Card titles are always teal, per design (Projects, Explore, and Community's cards all use
+// this). The card shortcode's href auto-detection strips any markdown link out of the heading
+// itself (see layouts/shortcodes/card.html), so there's no natural link element left to supply
+// this color - it has to be set explicitly here instead of just inheriting a link's color.
+.book-card .markdown-inner h1 {
+  color: var(--color-link);
+}
+
+.book-card-clickable {
+  transition: filter 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    // Highlight in place instead of the previous "lift up" (translateY + shadow) treatment.
+    filter: brightness(1.25);
+  }
+
+  // In case a heading ever still has a real nested <a> (e.g. href auto-detection didn't find/
+  // strip one), don't let it behave like its own separate link - the whole card is already one.
+  .markdown-inner h1 {
+    text-decoration: none;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      pointer-events: none;
+    }
+  }
+}
+
+.landing-container .project-card {
+  border: 2px solid $streamshub-green-2;
+  border-radius: $radius-sm;
+  background: linear-gradient(
+    to bottom right,
+    rgba($streamshub-green-5, 0.1),
+    rgba($streamshub-green-5, 1)
+  );
+}
+
+.project-card > .markdown-inner {
+  height: 100%;
+}
+
+.card-gradient {
+  // Subtle single-hue wash (matches ".project-card"'s own gradient approach just above) rather
+  // than the previous two hard-coded colors with tight, close-together stops (26%/52%), which
+  // read as an abrupt diagonal seam instead of a smooth gradient.
+  background: linear-gradient(
+    to bottom right,
+    rgba($streamshub-green-6, 0.15),
+    rgba($streamshub-green-0, 1)
+  ) !important;
+}
+
+.streamshub-architecture {
+  // Fill the section's content width (same left/right bounds as the heading/paragraph above it)
+  // instead of sizing to its own intrinsic width and sitting flush left, per design.
+  width: 100%;
+  align-self: stretch;
+}
+
+// 3.9 Markdown & Book Components
+.markdown {
+  h3 {
+    font-weight: bold;
+  }
+
+  pre code {
     font-size: 12px;
+  }
+
+  // The theme's table borders and its zebra-striped row background both resolve to the same
+  // color here (--gray-200/--gray-100 are both set to $streamshub-green-1 in _variables.scss),
+  // so the border is invisible on every striped row. Give just those rows' cells a border in the
+  // opposite/darker color ($streamshub-green-0, #02151b) so it actually shows up against the
+  // lighter striped background.
+  table tr:nth-child(2n) {
+    th,
+    td {
+      border-color: $streamshub-green-0;
+    }
+  }
 }
 
 .book-toc {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .book-menu {
-    font-size: 14px;
+  font-size: 14px;
+}
+
+// Extra breathing room above each sidebar's top-level list - the left menu's file tree (which
+// otherwise sits close under the version picker, or flush at the top on pages without one) and
+// the right TOC's list (which otherwise starts flush at the top of its content box), so both
+// sidebars get the same amount of space before their content begins.
+.book-menu-content nav > ul,
+.book-toc-content nav > ul {
+  margin-top: $spacing-xl;
 }
 
 .book-header {
-    margin-bottom: 1.5rem;
+  margin-bottom: $spacing-lg;
 }
 
-.book-brand .book-icon {
+.book-brand {
+  margin: 0;
+
+  a {
+    color: white;
+  }
+
+  .book-icon {
     filter: none; // Hugo makes logo monochrome by default
+  }
 }
 
-::placeholder {
-    color: var(--gray-500); // Placeholder text is a bit hard to read by default
+// The theme's "fixed" mixin makes ".book-menu-content"/".book-toc-content" `position: fixed` -
+// pinned to the *viewport*, top:6rem to bottom:0, regardless of how tall the actual page content
+// is. That's fine for the theme's own small per-page footer (nested inside .book-page, so it
+// naturally scrolls past underneath), but this site's global, multi-column footer sits *after*
+// ".container.flex" as a sibling - so the fixed sidebars kept floating on top of it once scrolled
+// far enough down. `position: sticky` fixes this *as long as the containing <aside> spans the
+// same height as .book-page* (the default `align-items: stretch` on ".container.flex" already
+// does this - do not override it to flex-start/start, or the <aside> shrinks to only its own
+// content height and the sticky sidebar detaches/unsticks long before the real page bottom,
+// instead of riding along until .book-page's actual end). With the aside stretched to match
+// .book-page, sticky keeps the sidebar pinned at top:6rem for the entire scroll and only lets go
+// exactly where .book-page (and therefore the aside) ends - i.e. right before the footer, never
+// overlapping it. max-height + overflow-y let a menu/TOC taller than the viewport scroll
+// internally instead of being clipped.
+.book-menu .book-menu-content,
+.book-toc .book-toc-content {
+  position: sticky !important;
+  top: 6rem !important;
+  bottom: auto !important;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
 }
 
-.subheading {
-    color: var(--gray-500);
-    margin-top: 0.4em;
-    margin-bottom: 0.5em;
-}
-
-.subheading + h1 {
-    margin-top: 0;
-}
-
-.rouge.highlight {
-    overflow-x: auto;
-}
-
-@media screen and (max-width: $mobile-breakpoint) {
-    aside {
-        margin-top: 1rem;
-    }
+// ".book-page" is a normal-flow element, not fixed - `position: relative; top: 6rem` visually
+// shifted it down without reserving that space in the flow, so the footer (the next sibling in
+// the DOM) rendered as if the page content were never shifted, overlapping the last ~6rem of
+// every docs/quick-start page's content. `margin-top` reserves the space properly.
+.book-page {
+  margin-top: 6rem;
 }
 
 .landing-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-top: 1.5em;
+  margin-bottom: $spacing-md;
+
+  img {
+    width: 3em;
+  }
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.inline-header-card {
+  text-align: left;
+
+  h1 {
     display: flex;
-    align-items: center;
-    gap: 0.8em;
+    align-items: flex-start;
+    gap: 12px;
 
-    margin-top: 1.5em;
-    margin-bottom: 1rem;
+    @include mobile {
+      gap: 8px;
+      align-items: center;
+    }
+  }
+}
 
+// 3.3 Cards
+// Note: uses the card shortcode's "image" param (rendered as a direct sibling of
+// ".markdown-inner", not inside it) rather than an inline markdown image - see
+// layouts/shortcodes/card.html. That keeps the icon out of the markdown body entirely, so
+// this is a plain 2-item grid: the icon image, then the heading+text stacked in the second column.
+// Selector is qualified with ".book-card" to out-specificity the theme's ".markdown .book-card"
+// base rule (two classes vs. one) - a bare ".card-with-icon" loses that fight regardless of
+// source order, since specificity beats source order.
+.book-card.card-with-icon {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  // Same value for the grid gap (icon -> text) and the container padding (corner -> icon) so
+  // both distances read as equal, per design.
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  align-items: start;
+  overflow: hidden;
+  height: 100%;
+  text-align: left;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+
+  > img {
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+  }
+
+  // Icon padding now lives on the card itself (above), and ".markdown-inner" is a sibling of
+  // the icon rather than a wrapper around it, so drop its own default padding here to avoid
+  // double-spacing the text side.
+  .markdown-inner {
+    padding: 0;
+  }
+
+  // Overrides the general ".book-card .markdown-inner h1" teal - these cards (Explore) keep a
+  // plain white/body-colored title, per design; only the "StreamsHub Projects" style cards use
+  // the teal title treatment.
+  .markdown-inner h1 {
+    margin: 0;
+    color: $body-font-color;
+  }
+
+  .markdown-inner p {
+    overflow-wrap: break-word;
+  }
+}
+
+// 3.4 Footer
+.book-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  position: relative;
+  width: 100%;
+  padding: $spacing-3xl $page-content-x-padding-desktop;
+  font-size: 1rem;
+
+  @include tablet {
+    padding: $spacing-3xl $page-content-x-padding-tablet;
+  }
+
+  @include mobile {
+    padding: $spacing-xl $page-content-x-padding-mobile;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: $streamshub-green-1;
+  }
+
+  .book-brand {
     img {
-        width: 3em;
+      width: 2rem;
+      height: 2rem;
     }
 
     h1 {
-        margin-top: 0;
-        margin-bottom: 0;
+      margin-left: $spacing-sm;
     }
+  }
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $spacing-2xl;
+  }
+}
+
+.footer-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  list-style: none;
+  width: 100%;
+  gap: $spacing-lg;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    justify-items: start;
+  }
+}
+
+.footer-column {
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    padding: $spacing-xs 0;
+    list-style: none;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    color: $streamshub-gray;
+  }
+}
+
+.footer-license {
+  bottom: 0;
+  width: 100%;
+  position: relative;
+  background: $streamshub-green-0;
+  color: $body-font-color;
+}
+
+.book-copyright {
+  padding: $spacing-xl;
+}
+
+// Uses the card shortcode's "image" param (a direct sibling of ".markdown-inner") - see the
+// ".card-with-icon" note above. Heading/text/"Learn more" link stack normally inside
+// ".markdown-inner"; only the icon needs its own grid column. Qualified with ".book-card" for
+// the same specificity reason as ".card-with-icon" above.
+.book-card.external-project-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  // Same value for the grid gap (icon -> text) and the container padding (corner -> icon), same
+  // reasoning as ".card-with-icon" above - the icon is a sibling of ".markdown-inner", not
+  // wrapped by it, so it never got that element's own padding and was touching the card edge.
+  column-gap: $spacing-lg;
+  padding: $spacing-lg;
+  align-items: start;
+  height: 100%;
+  text-align: left;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  > img {
+    align-self: center;
+    width: 48px;
+    height: 48px;
+
+    @include mobile {
+      justify-self: center;
+    }
+  }
+
+  .markdown-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    // Padding now lives on the card itself (above) so the icon and text sides match.
+    padding: 0;
+
+    h1 {
+      margin: 0;
+    }
+
+    p {
+      margin: 0;
+
+      &:last-child {
+        margin-top: auto;
+      }
+    }
+  }
+}
+
+// 3.6 Feature Sections
+.feature-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: $spacing-3xl;
+  padding: $spacing-xl 0;
+
+  &-image img {
+    width: 100%;
+    border-radius: $radius-lg;
+  }
+
+  &-text {
+    order: 1;
+  }
+
+  &-image {
+    order: 2;
+  }
+
+  // flip: image left, text right
+  &--flip {
+    .feature-section-text { order: 2; }
+    .feature-section-image { order: 1; }
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+
+    // On mobile, always text first then image
+    .feature-section-text { order: 1; }
+    .feature-section-image { order: 2; }
+
+    &--flip {
+      .feature-section-text { order: 1; }
+      .feature-section-image { order: 2; }
+    }
+  }
+}
+
+.feature-divider {
+  // Explicit width because ".page-section" is a flex column with align-items: flex-start - an
+  // empty <div> with no content would otherwise collapse to ~0 width instead of spanning the
+  // section. $streamshub-green-1 (#013440) is the correct design color (confirmed against the
+  // Figma source) - it just needed the width fix to actually be visible at all.
+  width: 100%;
+  align-self: stretch;
+  height: 10px;
+  background-color: $streamshub-green-1;
+}
+
+// ===================================
+// 4. UTILITIES
+// ===================================
+
+.subheading {
+  color: var(--gray-500);
+  margin-top: 0.4em;
+  margin-bottom: 0.5em;
+
+  + h1 {
+    margin-top: 0;
+  }
+}
+
+.list-none ul {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none !important;
+}
+
+.border-none {
+  border: none !important;
+}
+
+::placeholder {
+  color: var(--gray-500); // Placeholder text is a bit hard to read by default
+}
+
+.rouge.highlight {
+  overflow-x: auto;
+  background: $streamshub-green-1 !important;
+}
+
+// Legacy media query - convert to mixin
+@include mobile {
+  aside {
+    margin-top: $spacing-md;
+  }
+}
+
+// Base elements
+pre {
+  margin-top: $spacing-md;
+  margin-bottom: 1em;
+  padding: $spacing-md;
+}
+
+.main-container {
+  position: relative;
+  max-width: 100%;
+}
+
+.landing-container {
+  width: 100%;
+}
+
+// 3.10 Explore & Announcements
+.explore-kicker {
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  margin-bottom: $spacing-xs;
+}
+
+.explore-kicker--walk-through {
+  color: #e935c1;
+}
+
+.explore-kicker--tutorial {
+  color: #4aa3ff;
+}
+
+.explore-kicker--use-case {
+  color: #34c759;
+}
+
+// Overrides the theme's ".book-columns > ul" flex-wrap layout (which lets all 4 items sit in
+// one row at wide viewports) with a fixed 2-column grid + divider lines, matching the design.
+.book-columns > ul.explore-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.explore-list-item {
+  min-width: 0;
+  padding: $spacing-xl $spacing-2xl;
+  border-bottom: 1px solid $streamshub-green-1;
+
+  &:nth-child(odd) {
+    border-right: 1px solid $streamshub-green-1;
+  }
+
+  &:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+
+  @include mobile {
+    border-right: none;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.explore-article {
+  // ".page-section" centers its flex children via align-items regardless of text-align, so
+  // override that too, not just text-align, or the (left-aligned but shrink-to-fit) text
+  // blocks still visually sit centered in the column.
+  align-items: flex-start;
+  text-align: left;
+}
+
+.explore-breadcrumb {
+  margin-bottom: $spacing-md;
+
+  a {
+    color: var(--color-link);
+  }
+}
+
+.announcement-entry {
+  // ".page-section" centers flex children via align-items regardless of text-align, so this
+  // needs to stretch to full width as a flex item too, or it just centers as a narrow column.
+  align-self: stretch;
+  padding: $spacing-lg 0;
+  text-align: left;
+}
+
+.announcement-date {
+  color: var(--color-link);
+  font-weight: bold;
+}
+
+.book-version-picker {
+  margin-bottom: $spacing-md;
+}
+
+.book-version-picker-label {
+  font-size: 0.75rem;
+  color: $streamshub-gray;
+  margin-bottom: $spacing-xs;
+}
+
+.book-version-picker-select {
+  position: relative;
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+    cursor: pointer;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $streamshub-green-1;
+    border-radius: $radius-sm;
+    background: $streamshub-green-1;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  ul {
+    position: absolute;
+    z-index: 10;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: $spacing-xs;
+    padding: $spacing-xs 0;
+    list-style: none;
+    background: $streamshub-green-1;
+    border: 1px solid $streamshub-green-4;
+    border-radius: $radius-sm;
+
+    li a {
+      display: block;
+      padding: $spacing-xs $spacing-md;
+      color: $body-font-color;
+
+      &:hover, &.active {
+        color: var(--color-link);
+      }
+    }
+  }
 }

@@ -1,0 +1,38 @@
+{{/*
+  Given a docs-root page (e.g. /console/docs/, /flink-sql-runner/docs/), returns its version
+  pages sorted "main" first, then tags numerically descending. docBuilder downloads each version
+  into a folder named after the version string (e.g. "main", "0.8.3"), so that folder name -
+  not the page's Title - is what's matched: some sources (e.g. Developer Quick-Start) ship their
+  own front matter with a human title, which makes docBuilder skip adding its usual
+  title = "<version>" header (see addHeaderToIndexFiles/hasHugoFrontMatter in docBuilder.java).
+
+  Shared by the version picker and the docs-hub redirect so both agree on what "the current
+  version" is - in particular, whichever version this returns first is whatever a reader with
+  JS enabled gets redirected to from the docs-root landing page, so it must only ever include
+  versions that actually exist as real pages (e.g. falls back to the newest tag when "main"
+  hasn't been pulled locally, rather than pointing at a version that isn't there).
+*/}}
+{{- $versionPattern := `^(main|[0-9]+(\.[0-9]+){1,2})$` -}}
+{{- $versionPages := slice -}}
+{{- range .Pages -}}
+  {{- $version := path.Base .Path -}}
+  {{- if findRE $versionPattern $version -}}
+    {{- $versionPages = $versionPages | append (dict "Page" . "Version" $version) -}}
+  {{- end -}}
+{{- end -}}
+{{- $ranked := slice -}}
+{{- range $versionPages -}}
+  {{- $version := .Version -}}
+  {{- $key := "" -}}
+  {{- if eq $version "main" -}}
+    {{- $key = "9" -}}
+  {{- else -}}
+    {{- $padded := slice -}}
+    {{- range split $version "." -}}
+      {{- $padded = $padded | append (printf "%05d" (int .)) -}}
+    {{- end -}}
+    {{- $key = printf "1.%s" (delimit $padded ".") -}}
+  {{- end -}}
+  {{- $ranked = $ranked | append (dict "Page" .Page "Version" $version "Key" $key) -}}
+{{- end -}}
+{{- return (sort $ranked "Key" "desc") -}}
