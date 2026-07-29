@@ -1,0 +1,54 @@
+name: Cache Tagged Docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - sources.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "cache-tagged-docs"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup JBang
+        uses: jbangdev/setup-jbang@main
+
+      - name: Checkout site source
+        uses: actions/checkout@v7
+
+      - name: Download tagged docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: jbang scripts/docBuilder.java --tags-only --cleanup
+
+      - name: Commit and push cached docs
+        run: |
+          git add content/
+          if git diff --cached --quiet; then
+            echo "No new tagged docs to cache"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: cache tagged documentation versions"
+          git pull --rebase origin main
+          git push
