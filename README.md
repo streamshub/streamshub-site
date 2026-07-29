@@ -34,6 +34,31 @@ To pull the configured sources locally you will need a [GitHub access token](htt
 ./scripts/docBuilder.java <github-access-token>
 ```
 
+## CI/CD Workflows
+
+### Caching tagged documentation (`cache-tagged-docs.yaml`)
+
+Tagged documentation versions (those listed in the `tags` array of each `sources.json` entry) are immutable release snapshots that do not change after release.
+To avoid re-downloading them on every build, this workflow commits them to the repository.
+
+The workflow runs automatically when `sources.json` is pushed to `main` (e.g. after adding a new release tag) and can also be triggered manually.
+It downloads only tagged versions (`--tags-only`) and removes cached folders for any tags that have been deleted from the configuration (`--cleanup`).
+
+If new or removed tags are detected, the workflow:
+
+1. Creates a branch (`ci/cache-tagged-docs`) with the updated cached content
+2. Opens a pull request targeting `main` (or updates the existing one if the branch already has an open PR)
+
+Once the PR is merged, the publish workflow automatically triggers and deploys the updated site.
+
+### Publishing the site (`publish.yaml`)
+
+The publish workflow builds and deploys the site to GitHub Pages.
+It runs on every push to `main`, on a daily schedule, and on manual dispatch.
+
+Unlike the caching workflow, it fetches development branch documentation on every run (these are not committed to the repository).
+Tagged documentation is already present in the repository from the caching workflow, so it does not need to be re-downloaded.
+
 ## Building the site
 
 ### Prerequisites
