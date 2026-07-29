@@ -1,0 +1,88 @@
+:_mod-docs-content-type: REFERENCE
+
+// Module included in the following assemblies:
+//
+// assembly-deploying.adoc
+
+[id='ref-schema-registries-{context}']
+= Using a schema registry with Kafka
+
+[role="_abstract"]
+Integrate a schema registry with the console to centrally manage schemas for Kafka data.
+The console currently supports integration with {ApicurioRegistrySite} to reference and validate schemas used in Kafka data streams.
+Requests to the registry can be authenticated using supported methods, including OIDC.
+
+A placeholder for adding schema registries is provided in: `examples/console/010-Console-example.yaml`.
+
+You can define schema registry connections globally as part of the console configuration using `schemaRegistries` properties:
+
+`schemaRegistries`:: Defines external schema registries that the console can connect to for schema validation and management.
+`authentication`:: Configures access to the schema registry using `basic`, `bearer` token, or `oidc` authentication.
+`trustStore`:: (Optional) Specifies a truststore for verifying TLS certificates when connecting to the schema registry. 
+Supported formats: `JKS`, `PEM`, `PKCS12`. 
+Content may be provided using a `ConfigMap` or a `Secret`.
+
+Assign the schema registry source to a Kafka cluster using the `kafkaClusters.schemaRegistry` property.
+The value of `schemaRegistry` is the `name` of the entry in the `schemaRegistries` array.
+
+.Example schema registry configuration with OIDC authentication
+[source,yaml]
+----
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: my-console
+spec:
+  hostname: my-console.<cluster_domain>
+  schemaRegistries:
+    - name: my-registry
+      url: <schema_registry_URL>
+      authentication:
+        oidc:
+          authServerUrl: <OIDC_discovery_URL>
+          clientId: <client_id>
+          clientSecret:
+            valueFrom:
+              secretKeyRef:
+                name: my-oidc-secret
+                key: client-secret
+          method: POST
+          grantType: CLIENT
+          trustStore:
+            type: JKS
+            content:
+              valueFrom:
+                configMapKeyRef:
+                  name: my-oidc-configmap
+                  key: ca.jks
+            password:
+              value: truststore-password
+      trustStore:
+        type: PEM
+        content:
+          valueFrom:
+            configMapKeyRef:
+              name: my-apicurio-configmap
+              key: cert-chain.pem
+    kafkaClusters:
+      - name: console-kafka
+        namespace: kafka
+        listener: secure
+        metricsSource: my-ocp-prometheus
+        schemaRegistry: my-registry
+        credentials:
+          kafkaUser:
+            name: console-kafka-user1
+  # ...
+----
+
+* `schemaRegistries.name` defines a unique name for the schema registry connection.
+* `schemaRegistries.url` specifies the base URL of the schema registry API, typically the REST endpoint such as `\http://<host>/apis/registry/v2`.
+* `schemaRegistries.authentication` defines the authentication configuration used to access the schema registry.
+** `basic` specifies basic authentication and requires a `username` and `password`.
+** `bearer` specifies bearer token authentication and requires a `token`.
+** `oidc` specifies OpenID Connect authentication. For details, see xref:ref-authentication-options-{context}[Using an OIDC provider to secure access to Kafka clusters].
+* `schemaRegistries.authentication.oidc.trustStore` optionally defines a truststore used to validate the OIDC provider TLS certificate. Supported formats include `JKS`, `PEM`, and `PKCS12`. Truststore content can be provided by using either a ConfigMap or a Secret.
+* `schemaRegistries.authentication.oidc.trustStore.password` optionally specifies the truststore password. The password can be provided as a plaintext value or via a Secret. Plaintext values are not recommended for production environments.
+* `schemaRegistries.trustStore` optionally defines a truststore used to validate the schema registry TLS certificate. The supported formats and content sources are the same as for the OIDC truststore.
+* `kafkaClusters.schemaRegistry` associates the Kafka cluster with the configured schema registry.

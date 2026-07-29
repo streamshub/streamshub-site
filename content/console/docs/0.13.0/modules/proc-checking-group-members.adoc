@@ -1,0 +1,17 @@
+:_mod-docs-content-type: PROCEDURE
+
+[id='proc-checking-group-members-{context}']
+= Checking group members
+
+[role="_abstract"]
+Check the members of a group from the *Groups* page.
+
+.Procedure
+
+. Log in to the Kafka cluster in the StreamsHub Console, then click *Groups*. 
+. On the *Groups* page, click the name of the group you want to inspect.
+. Click the right arrow (>) next to a member ID to view the topic partitions associated with the member and any available lag information.
++
+For each group member, the console shows information such as the client ID, the number of assigned partitions, and any available offset or lag metrics.
++
+For consumer groups, lag reflects the gap between the last message processed by a consumer (committed offset position) and the latest message written to the partition (end offset position).
