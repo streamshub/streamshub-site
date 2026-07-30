@@ -39,7 +39,7 @@ StreamsHub combines with other open-source projects like <a href="https://strimz
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Strimzi MCP Server](/strimzi-mcp-server/)
+  # [MCP Server for Strimzi](/strimzi-mcp-server/)
   MCP server for Strimzi to make deploying, managing and developing with Strimzi quicker and easier.
   {{< /card >}}
 {{% /columns %}}
@@ -55,8 +55,8 @@ StreamsHub combines with other open-source projects like <a href="https://strimz
   {{< /card >}}
 
 - {{< card href="/explore/strimzi-mcp/" image="img/icons/fa-microchip.png" class="project-card card-gradient card-with-icon" >}}
-  # Using the Strimzi MCP
-  Learn how to make the most of Strimzi in your app development with the Strimzi MCP server.
+  # Using the MCP Server for Strimzi
+  Learn how to make the most of Strimzi in your app development with the MCP server for Strimzi.
   {{< /card >}}
 
 - {{< card href="/explore/prometheus-metrics/" image="img/icons/pf-icon-monitoring.png" class="project-card card-gradient card-with-icon" >}}
