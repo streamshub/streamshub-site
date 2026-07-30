@@ -21,7 +21,7 @@
 {{- $projectLabels := dict
   "console" "Console"
   "flink-sql-runner" "Flink SQL Runner"
-  "strimzi-mcp-server" "Strimzi MCP Server"
+  "strimzi-mcp-server" "MCP Server for Strimzi"
   "explore" "Explore"
   "announcements" "Announcements"
   "community" "Community"

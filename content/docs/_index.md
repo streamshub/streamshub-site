@@ -22,7 +22,7 @@ layout = "hub"
   {{< /card >}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Strimzi MCP Server](/strimzi-mcp-server/docs/)
+  # [MCP Server for Strimzi](/strimzi-mcp-server/docs/)
   An MCP server that lets AI agents and tools interact with Kafka clusters managed by Strimzi.
   {{< /card >}}
 {{% /columns %}}

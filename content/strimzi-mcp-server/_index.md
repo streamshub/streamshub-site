@@ -1,9 +1,9 @@
 ---
-title: "Strimzi MCP Server"
+title: "MCP Server for Strimzi"
 description: "Documentation coming soon."
 layout: "single"
 ---
 
-Documentation for Strimzi MCP Server is coming soon.
+Documentation for MCP Server for Strimzi is coming soon.
 
 [Documentation](/strimzi-mcp-server/docs/)
