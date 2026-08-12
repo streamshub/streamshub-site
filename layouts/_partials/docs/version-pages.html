@@ -1,38 +1,36 @@
 {{/*
-  Given a docs-root page (e.g. /console/docs/, /flink-sql-runner/docs/), returns its version
-  pages sorted "main" first, then tags numerically descending. docBuilder downloads each version
-  into a folder named after the version string (e.g. "main", "0.8.3"), so that folder name -
-  not the page's Title - is what's matched: some sources (e.g. Developer Quick-Start) ship their
-  own front matter with a human title, which makes docBuilder skip adding its usual
-  title = "<version>" header (see addHeaderToIndexFiles/hasHugoFrontMatter in docBuilder.java).
+  Given a docs-root page (e.g. /console/docs/), returns its version pages sorted: development
+  branch first, then tags numerically descending. Each entry is a dict with:
+    - Page:    the Hugo page object
+    - Version: the raw folder name (e.g. "main", "0.13.0")
+    - Display: user-facing label ("In-Development" for dev branches, raw version for tags)
+    - Key:     sort key (dev branch = "9", tags = zero-padded semver)
 
-  Shared by the version picker and the docs-hub redirect so both agree on what "the current
-  version" is - in particular, whichever version this returns first is whatever a reader with
-  JS enabled gets redirected to from the docs-root landing page, so it must only ever include
-  versions that actually exist as real pages (e.g. falls back to the newest tag when "main"
-  hasn't been pulled locally, rather than pointing at a version that isn't there).
+  Development branches are detected by the developmentBranch front matter flag (stamped by
+  docBuilder). As a backwards-compatibility fallback, any non-semver folder without the flag
+  explicitly set to false is also treated as a development branch — this covers docs built
+  before the flag was introduced.
 */}}
-{{- $versionPattern := `^(main|[0-9]+(\.[0-9]+){1,2})$` -}}
 {{- $versionPages := slice -}}
 {{- range .Pages -}}
   {{- $version := path.Base .Path -}}
-  {{- if findRE $versionPattern $version -}}
-    {{- $versionPages = $versionPages | append (dict "Page" . "Version" $version) -}}
-  {{- end -}}
-{{- end -}}
-{{- $ranked := slice -}}
-{{- range $versionPages -}}
-  {{- $version := .Version -}}
-  {{- $key := "" -}}
-  {{- if eq $version "main" -}}
-    {{- $key = "9" -}}
-  {{- else -}}
-    {{- $padded := slice -}}
-    {{- range split $version "." -}}
-      {{- $padded = $padded | append (printf "%05d" (int .)) -}}
+  {{- $isDev := .Params.developmentBranch -}}
+  {{- $isTag := findRE `^[0-9]+(\.[0-9]+){1,2}$` $version -}}
+  {{- $isLegacyDev := and (not $isTag) (not (isset .Params "developmentbranch")) -}}
+  {{- if or $isDev $isTag $isLegacyDev -}}
+    {{- $display := $version -}}
+    {{- $key := "" -}}
+    {{- if or $isDev $isLegacyDev -}}
+      {{- $display = "In-Development" -}}
+      {{- $key = "9" -}}
+    {{- else -}}
+      {{- $padded := slice -}}
+      {{- range split $version "." -}}
+        {{- $padded = $padded | append (printf "%05d" (int .)) -}}
+      {{- end -}}
+      {{- $key = printf "1.%s" (delimit $padded ".") -}}
     {{- end -}}
-    {{- $key = printf "1.%s" (delimit $padded ".") -}}
+    {{- $versionPages = $versionPages | append (dict "Page" . "Version" $version "Display" $display "Key" $key) -}}
   {{- end -}}
-  {{- $ranked = $ranked | append (dict "Page" .Page "Version" $version "Key" $key) -}}
 {{- end -}}
-{{- return (sort $ranked "Key" "desc") -}}
+{{- return (sort $versionPages "Key" "desc") -}}

@@ -1,10 +1,11 @@
+{{ partial "docs/version-picker" . }}
 {{ if and .Parent .Title }}
 <h3 class="subheading">{{ .Parent.LinkTitle }}</h3>
   <h1>
-    {{ .Title }}
+    {{ if .Params.developmentBranch }}In-Development{{ else }}{{ .Title }}{{ end }}
   </h1>
 {{ else if .Title }}
   <h1>
-    {{ .Title }}
+    {{ if .Params.developmentBranch }}In-Development{{ else }}{{ .Title }}{{ end }}
   </h1>
 {{ end }}

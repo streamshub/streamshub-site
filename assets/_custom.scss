@@ -983,15 +983,9 @@ footer {
   font-size: 12px;
 }
 
-.book-menu {
-  font-size: 14px;
-}
 
-// Extra breathing room above each sidebar's top-level list - the left menu's file tree (which
-// otherwise sits close under the version picker, or flush at the top on pages without one) and
-// the right TOC's list (which otherwise starts flush at the top of its content box), so both
-// sidebars get the same amount of space before their content begins.
-.book-menu-content nav > ul,
+// Extra breathing room above the right TOC's list (which otherwise starts flush at the top of
+// its content box).
 .book-toc-content nav > ul {
   margin-top: $spacing-xl;
 }
@@ -1012,21 +1006,11 @@ footer {
   }
 }
 
-// The theme's "fixed" mixin makes ".book-menu-content"/".book-toc-content" `position: fixed` -
-// pinned to the *viewport*, top:6rem to bottom:0, regardless of how tall the actual page content
-// is. That's fine for the theme's own small per-page footer (nested inside .book-page, so it
-// naturally scrolls past underneath), but this site's global, multi-column footer sits *after*
-// ".container.flex" as a sibling - so the fixed sidebars kept floating on top of it once scrolled
-// far enough down. `position: sticky` fixes this *as long as the containing <aside> spans the
-// same height as .book-page* (the default `align-items: stretch` on ".container.flex" already
-// does this - do not override it to flex-start/start, or the <aside> shrinks to only its own
-// content height and the sticky sidebar detaches/unsticks long before the real page bottom,
-// instead of riding along until .book-page's actual end). With the aside stretched to match
-// .book-page, sticky keeps the sidebar pinned at top:6rem for the entire scroll and only lets go
-// exactly where .book-page (and therefore the aside) ends - i.e. right before the footer, never
-// overlapping it. max-height + overflow-y let a menu/TOC taller than the viewport scroll
-// internally instead of being clipped.
-.book-menu .book-menu-content,
+// The theme's "fixed" mixin makes ".book-toc-content" `position: fixed` — pinned to the viewport,
+// top:6rem to bottom:0. This site's global footer sits *after* ".container.flex" as a sibling, so
+// fixed positioning caused the TOC to float on top of it. `position: sticky` fixes this as long as
+// the containing <aside> spans the same height as .book-page (the default `align-items: stretch`
+// on ".container.flex" already does this).
 .book-toc .book-toc-content {
   position: sticky !important;
   top: 6rem !important;
@@ -1467,17 +1451,21 @@ pre {
 }
 
 .book-version-picker {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-sm;
   margin-bottom: $spacing-md;
 }
 
 .book-version-picker-label {
   font-size: 0.75rem;
   color: $streamshub-gray;
-  margin-bottom: $spacing-xs;
 }
 
 .book-version-picker-select {
   position: relative;
+  min-width: 10rem;
 
   summary {
     display: flex;
@@ -1485,10 +1473,11 @@ pre {
     justify-content: space-between;
     list-style: none;
     cursor: pointer;
-    padding: $spacing-sm $spacing-md;
-    border: 1px solid $streamshub-green-1;
+    padding: $spacing-xs $spacing-md;
+    border: 1px solid $streamshub-green-2;
     border-radius: $radius-sm;
-    background: $streamshub-green-1;
+    background: $streamshub-green-4;
+    font-size: 0.85rem;
 
     &::-webkit-details-marker {
       display: none;
@@ -1499,8 +1488,8 @@ pre {
     position: absolute;
     z-index: 10;
     top: 100%;
-    left: 0;
     right: 0;
+    min-width: 100%;
     margin-top: $spacing-xs;
     padding: $spacing-xs 0;
     list-style: none;

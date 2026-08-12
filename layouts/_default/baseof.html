@@ -11,7 +11,6 @@
   dir="{{ default "ltr" .Site.Language.LanguageDirection }}"
   class="book-kind-{{ .Kind }} book-type-{{ .Type }} book-layout-{{ .Layout }}"
 >
-  <input type="checkbox" class="hidden toggle" id="menu-control" />
   {{ partial "navbar-header.html" . }}
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="main-container">
@@ -26,16 +25,7 @@
 {{ define "header" }}
 {{ end }}
 
-{{ define "menu" }}
-  {{ partial "docs/menu" . }}
-{{ end }}
-
 {{ define "menu-container" }}
-<aside class="book-menu">
-  <div class="book-menu-content">
-    {{ template "menu" . }}
-  </div>
-</aside>
 {{ end }}
 
 {{ define "main-container" }}
@@ -49,7 +39,6 @@
     <!-- Page Content -->
     {{ template "main" . }}
     {{ partial "docs/inject/content-after" . }}
-    <label for="menu-control" class="hidden book-menu-overlay"></label>
   </div>
   {{ template "toc-container" . }}
 </div>
