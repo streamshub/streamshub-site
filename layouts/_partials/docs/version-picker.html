@@ -4,10 +4,10 @@
   page, its community page, or its Quick Start - Quick Start isn't itself versioned and doesn't
   link into a specific doc version, so the picker doesn't apply there).
 
-  Version pages are identified the same way as docs/menu-filetree.html: docBuilder tags every
-  version folder's index page with title = the version string (e.g. "main", "0.8.3"). "main"
-  (the development branch) is always the default/top entry; tagged versions sort numerically,
-  newest first.
+  Version pages are identified by the docs/version-pages.html partial: development branches are
+  detected via the developmentBranch front matter flag (set by docBuilder), and tagged versions
+  are matched by semver pattern. The development branch is always the top entry; tagged versions
+  sort numerically, newest first.
 */}}
 {{- $projectRoots := slice
   (dict "match" "/console/docs" "docs" "/console/docs")
@@ -35,10 +35,10 @@
     <div class="book-version-picker">
       <div class="book-version-picker-label">Version</div>
       <details class="book-version-picker-select">
-        <summary>{{ $selected.Version }} <span class="book-version-picker-arrow">&#9662;</span></summary>
+        <summary>{{ $selected.Display }} <span class="book-version-picker-arrow">&#9662;</span></summary>
         <ul>
           {{ range $sorted }}
-          <li><a href="{{ .Page.RelPermalink }}" class="{{ if eq .Page $selected.Page }}active{{ end }}">{{ .Version }}</a></li>
+          <li><a href="{{ .Page.RelPermalink }}" class="{{ if eq .Page $selected.Page }}active{{ end }}">{{ .Display }}</a></li>
           {{ end }}
         </ul>
       </details>

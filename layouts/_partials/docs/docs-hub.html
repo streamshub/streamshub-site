@@ -10,7 +10,7 @@
 {{- with $sorted -}}
   {{- $target := index . 0 -}}
   <div id="__redirect-target" style="display:none">
-    <a href="{{ $target.Page.RelPermalink }}">{{ $target.Version }}</a>
+    <a href="{{ $target.Page.RelPermalink }}">{{ $target.Display }}</a>
   </div>
   <script>
   (function () {
@@ -21,7 +21,7 @@
   <noscript>
     <ul>
       {{ range . }}
-      <li><a href="{{ .Page.RelPermalink }}">{{ .Version }}</a></li>
+      <li><a href="{{ .Page.RelPermalink }}">{{ .Display }}</a></li>
       {{ end }}
     </ul>
   </noscript>

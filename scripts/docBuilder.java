@@ -287,14 +287,17 @@ class DocBuilder implements Callable<Integer> {
         return jinjava.render(template, context);
     }
 
-    private void addHeaderToIndexFiles(Path sourceFolder, String sourceName, String versionReference) throws IOException {
+    private void addHeaderToIndexFiles(Path sourceFolder, String sourceName, String versionReference, boolean isDevelopmentBranch) throws IOException {
         LOGGER.info("Adding Hugo frontmatter header to index files in " + sourceName + " - " + sourceFolder);
         List<Path> indexFiles = FileTools.findIndexFiles(sourceFolder);
         if (indexFiles.size() == 0){
             LOGGER.warn("Found no index files in docs folder:" + sourceFolder);
         } else {
 
-            Map<String, Object> headerData = Map.of("version", versionReference);
+            Map<String, Object> headerData = Map.of(
+                "version", versionReference,
+                "isDevelopmentBranch", isDevelopmentBranch
+            );
             String renderedHeader = renderTemplate("indexHeader.txt", headerData);
 
             for(Path indexFile : indexFiles){
@@ -311,7 +314,8 @@ class DocBuilder implements Callable<Integer> {
         GitHubFolderDownloader ghFolderDownloader,
         Source source,
         String versionReference,
-        boolean skipIfOutputFolderExists) throws IOException, URISyntaxException {
+        boolean skipIfOutputFolderExists,
+        boolean isDevelopmentBranch) throws IOException, URISyntaxException {
 
         LOGGER.info("Downloading documentation for " + source.name() + " version " + versionReference);
 
@@ -328,7 +332,7 @@ class DocBuilder implements Callable<Integer> {
                     outputDirectory
                 );
                 //Add the header to the index file
-                addHeaderToIndexFiles(outputDirectory, source.name(), versionReference);
+                addHeaderToIndexFiles(outputDirectory, source.name(), versionReference, isDevelopmentBranch);
             } catch (FileNotFoundException fileNotFoundError) {
                 LOGGER.error(
                     "Unable to download folder for: " + source.name() + " - " + versionReference +". Is the version string valid?",
@@ -479,7 +483,7 @@ class DocBuilder implements Callable<Integer> {
                 sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
                     try {
                         //Download the dev branch
-                        processSource(ghFolderDownloader, source, source.developmentBranch(), false);
+                        processSource(ghFolderDownloader, source, source.developmentBranch(), false, true);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -490,7 +494,7 @@ class DocBuilder implements Callable<Integer> {
             for (String tag : source.tags()) {
                 sourceFutures.get(source).add(CompletableFuture.runAsync(() -> {
                     try {
-                        processSource(ghFolderDownloader, source, tag, true);
+                        processSource(ghFolderDownloader, source, tag, true, false);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
