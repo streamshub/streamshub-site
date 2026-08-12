@@ -7,7 +7,7 @@ description = "StreamsHub provides a curated set of open source projects, templa
 +++
 
 <section class="page-section">
-<h1>What is streamshub?</h1>
+<h1>What is StreamsHub?</h1>
 <p>StreamsHub provides a set of open source projects which support event-driven architectures running on Kubernetes.</p>
 <img src="img/streamshub-architecture-v2-dark-03.png" alt="" class="streamshub-architecture">
 </section>
