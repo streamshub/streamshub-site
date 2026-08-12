@@ -31,7 +31,7 @@ Detailed broker information ensure you can always see the state of your cluster.
 {{% columns %}}
 
 - {{< card title="Card" image="" class="project-card" >}}
-  # [Quick start](/console/quick-start/)
+  # [Quick start](/quick-start/)
   Get started with a quick and easy deployment of Strimzi, the Console and a few other required resources to get a working local set up in minutes.
   {{< /card >}}
 

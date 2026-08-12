@@ -1,0 +1,12 @@
+{{- $quickstartMain := .Site.GetPage "/quick-start/main" -}}
+{{- if and $quickstartMain (ne . $quickstartMain) ($quickstartMain.IsAncestor .) -}}
+<nav class="docs-breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ $quickstartMain.RelPermalink }}">Quick Start</a>
+  {{- range .Ancestors.Reverse -}}
+    {{- if and (ne . $quickstartMain) ($quickstartMain.IsAncestor .) -}}
+      &gt; <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    {{- end -}}
+  {{- end -}}
+  &gt; {{ .LinkTitle }}
+</nav>
+{{- end -}}

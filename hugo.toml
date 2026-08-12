@@ -61,6 +61,12 @@ enableGitInfo = true
   url = "/strimzi-mcp-server"
   weight = 3
 
+[[menu.home]]
+  name = "Quick Start"
+  parent = "projects"
+  url = "/quick-start"
+  weight = 4
+
 
 [[menu.home]]
   name = "Explore"
@@ -105,6 +111,12 @@ enableGitInfo = true
   parent = "projects"
   url = "/strimzi-mcp-server"
   weight = 3
+
+[[menu.footer]]
+  name = "Quick Start"
+  parent = "projects"
+  url = "/quick-start"
+  weight = 4
 
 [[menu.footer]]
   name = "Community"

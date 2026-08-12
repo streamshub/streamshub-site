@@ -1429,7 +1429,8 @@ pre {
   text-align: left;
 }
 
-.explore-breadcrumb {
+.explore-breadcrumb,
+.docs-breadcrumb {
   margin-bottom: $spacing-md;
 
   a {
