@@ -25,6 +25,11 @@ layout = "hub"
   # [MCP Server for Strimzi](/strimzi-mcp-server/docs/)
   An MCP server that lets AI agents and tools interact with Kafka clusters managed by Strimzi.
   {{< /card >}}
+
+- {{< card title="Card" image="" class="project-card" >}}
+  # [GitOps](/docs/gitops/main/)
+  Manage Strimzi-based event-driven infrastructure using GitOps with Argo CD, including tutorials, companion guides, and deployment examples.
+  {{< /card >}}
 {{% /columns %}}
 
 </section>
