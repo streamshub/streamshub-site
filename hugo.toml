@@ -67,6 +67,12 @@ enableGitInfo = true
   url = "/quick-start"
   weight = 4
 
+[[menu.home]]
+  name = "GitOps Guides"
+  parent = "projects"
+  url = "/docs/gitops/main/"
+  weight = 5
+
 
 [[menu.home]]
   name = "Explore"
@@ -117,6 +123,12 @@ enableGitInfo = true
   parent = "projects"
   url = "/quick-start"
   weight = 4
+
+[[menu.footer]]
+  name = "GitOps Guides"
+  parent = "projects"
+  url = "/docs/gitops/main/"
+  weight = 5
 
 [[menu.footer]]
   name = "Community"
