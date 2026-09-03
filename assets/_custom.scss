@@ -952,8 +952,8 @@ footer {
 .streamshub-architecture {
   // Fill the section's content width (same left/right bounds as the heading/paragraph above it)
   // instead of sizing to its own intrinsic width and sitting flush left, per design.
-  width: 100%;
-  align-self: stretch;
+  width: 80%;
+  align-self: center;
 }
 
 // 3.9 Markdown & Book Components
