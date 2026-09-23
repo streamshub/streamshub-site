@@ -16,3 +16,6 @@ hugo.linux
 /node_modules/
 .idea/
 *.iml
+
+# AI Agents
+.bob/
