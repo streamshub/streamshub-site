@@ -37,5 +37,15 @@
         "docsFolderPath": "docs",
         "tags":[],
         "skipContentsPageCreation": true
+    },
+    {
+        "name": "GitOps Guides",
+        "outputPath": "docs/gitops",
+        "sourceOwner": "streamshub",
+        "sourceRepository": "streamshub-gitops",
+        "developmentBranch": "main",
+        "docsFolderPath": "docs",
+        "tags": [],
+        "skipContentsPageCreation": true
     }
 ]
