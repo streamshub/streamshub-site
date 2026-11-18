@@ -495,8 +495,8 @@ footer {
   gap: $spacing-sm;
   padding: $spacing-sm 7rem $spacing-sm $spacing-md;
   background: var(--body-background);
-  color: $streamshub-green-2;
-  border: 1px solid $streamshub-green-2;
+  color: $body-font-color;
+  border: 0px solid #ddd;
   border-radius: $radius-md;
   cursor: pointer;
   font-size: 0.9rem;
@@ -507,7 +507,7 @@ footer {
   }
 
   &:hover {
-    opacity: 0.8;
+    backdrop-filter: brightness(0.5);
   }
 }
 
@@ -605,10 +605,9 @@ footer {
   font-size: 1rem;
   padding: $spacing-sm;
   background: none;
-  color: $streamshub-green-2;
 
   &::placeholder {
-    color: $streamshub-green-2 !important;
+    color: $body-font-color !important;
   }
 }
 
