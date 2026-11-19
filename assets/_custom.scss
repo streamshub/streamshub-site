@@ -495,6 +495,7 @@ footer {
   gap: $spacing-sm;
   padding: $spacing-sm 7rem $spacing-sm $spacing-md;
   background: var(--body-background);
+  color: $body-font-color;
   border: 0px solid #ddd;
   border-radius: $radius-md;
   cursor: pointer;
